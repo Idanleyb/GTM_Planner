@@ -11,7 +11,7 @@ First-time Supabase setup: see [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md
 ```bash
 npm install
 cp .env.example .env.local   # add Supabase URL + anon key
-npm run dev        # engine preview at http://localhost:5173
+npm run dev        # app at http://localhost:5173
 npm test           # unit tests + database access-rule tests
 npm run build      # typecheck + production build
 ```
@@ -52,7 +52,7 @@ Key rules:
 - [x] Step 2 — project scaffold
 - [x] Step 5 — tested engine + prototype JSON import
 - [x] Step 3 — Supabase schema + RLS, data access layer (apply the migration once: see docs/SUPABASE_SETUP.md)
-- [ ] Step 4 — section renderers (fields, editable tables, checklists, calculators)
+- [x] Step 4 — section screens: fields, editable tables, checklists, funnel + budget calculators, readiness per step (in-memory until Step 7)
 - [ ] Step 6 — cross-section wiring (channel selection, motion switch, date recalculation)
 - [ ] Step 7 — autosave · Step 8 — auth & collaboration · Step 9 — dashboard, Tasks, Go/No-Go views
 - [ ] Step 10 — exports (JSON, CSV, DOCX one-pager) · Step 11 — AI assist · Step 12 — e2e tests + Vercel deploy

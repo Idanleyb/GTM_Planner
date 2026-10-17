@@ -1,1 +1,38 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #14213D;        /* rail, headings, primary text */
+  --color-ink-soft: #3A4762;   /* body text */
+  --color-ink-muted: #6B7590;  /* secondary text */
+  --color-paper: #F5F6F8;      /* app background */
+  --color-sheet: #FFFFFF;      /* work surfaces */
+  --color-line: #DCE0E8;       /* hairlines */
+  --color-signal: #E0A030;     /* amber: focus, current step, in progress */
+  --color-signal-soft: #FBF1DC;
+  --color-ready: #1F7A6B;      /* teal: ready / done */
+  --color-ready-soft: #E3F1EE;
+  --color-idle: #8A93A6;       /* not started */
+  --color-alert: #B4412F;      /* errors, overdue */
+  --color-alert-soft: #F8E6E2;
+}
+
+@layer base {
+  html { font-family: var(--font-sans); color: var(--color-ink-soft); background: var(--color-paper); }
+  body { margin: 0; }
+  :focus-visible { outline: 2px solid var(--color-signal); outline-offset: 2px; }
+  input, select, textarea { font: inherit; color: var(--color-ink); }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+}
+
+@utility condensed { font-stretch: 72%; }
+@utility field-control {
+  width: 100%;
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  background: var(--color-sheet);
+  padding: 0.5rem 0.65rem;
+  line-height: 1.4;
+  &:hover { border-color: #C3C9D6; }
+  &:focus { border-color: var(--color-signal); outline: none; box-shadow: 0 0 0 3px var(--color-signal-soft); }
+}
