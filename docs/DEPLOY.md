@@ -19,7 +19,7 @@ Before clicking Deploy, open **Environment Variables** and add both, for all env
 | `VITE_SUPABASE_URL` | `https://qwjtocmtsbbnezmyxymd.supabase.co` |
 | `VITE_SUPABASE_ANON_KEY` | the anon (public) key from Supabase → Project Settings → API |
 
-Then click **Deploy**. When it finishes, copy your address, e.g. `https://gtm-planner.vercel.app`.
+Then click **Deploy**. When it finishes, copy your address. Production: **https://gtm-planner-gules.vercel.app**
 
 > If you deploy without these variables the app still loads, but in demo mode (nothing is saved). Add them under **Settings → Environment Variables** and redeploy.
 
@@ -27,10 +27,10 @@ Then click **Deploy**. When it finishes, copy your address, e.g. `https://gtm-pl
 
 Supabase → **Authentication → URL Configuration**:
 
-- **Site URL**: your Vercel address, e.g. `https://gtm-planner.vercel.app`
+- **Site URL**: `https://gtm-planner-gules.vercel.app`
 - **Redirect URLs**: keep `http://localhost:5173/**` and add
-  - `https://gtm-planner.vercel.app/**`
-  - `https://gtm-planner-*.vercel.app/**` (preview deployments for pull requests; use your project name)
+  - `https://gtm-planner-gules.vercel.app/**`
+  - `https://gtm-planner-*.vercel.app/**` (preview deployments for pull requests)
 
 Without this step the sign-in email links back to localhost.
 

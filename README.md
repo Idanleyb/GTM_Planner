@@ -2,6 +2,8 @@
 
 A step-by-step planner that guides marketers through building and running a go-to-market plan: strategy, plan, readiness, and post-launch learning.
 
+Live: **https://gtm-planner-gules.vercel.app**
+
 Stack: Vite + React + TypeScript, Tailwind, Vitest, Supabase (Postgres + auth, RLS). Hosted on Vercel.
 
 First-time Supabase setup: [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md). Deploying: [`docs/DEPLOY.md`](docs/DEPLOY.md).
