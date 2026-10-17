@@ -116,7 +116,7 @@ const channels: SectionDef = {
     blankRow: { channel: '', role: '', audience: '', offer: '', asset: '', budget: '', kpi: '', owner: '', date: '', test: '', status: 'Not started' },
     task: t('channel', 'date'),
   }],
-  notices: ['Selecting a channel adds its row; unselecting archives it (wired in Step 6).'],
+  notices: ['Ticking a channel adds its row. Unticking removes it; rows with work in them are archived and come back when you tick the channel again.'],
   gate: { tableRows: { table: 'rows', min: 1, requireCols: ['channel', 'kpi', 'owner'] } },
 }
 

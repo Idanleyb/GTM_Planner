@@ -53,6 +53,6 @@ Key rules:
 - [x] Step 5 — tested engine + prototype JSON import
 - [x] Step 3 — Supabase schema + RLS, data access layer (apply the migration once: see docs/SUPABASE_SETUP.md)
 - [x] Step 4 — section screens: fields, editable tables, checklists, funnel + budget calculators, readiness per step (in-memory until Step 7)
-- [ ] Step 6 — cross-section wiring (channel selection, motion switch, date recalculation)
+- [x] Step 6 — cross-section wiring: channel picker (archive / restore), motion → funnel model, launch date → roadmap dates (hand-set dates kept), project name follows product
 - [ ] Step 7 — autosave · Step 8 — auth & collaboration · Step 9 — dashboard, Tasks, Go/No-Go views
 - [ ] Step 10 — exports (JSON, CSV, DOCX one-pager) · Step 11 — AI assist · Step 12 — e2e tests + Vercel deploy

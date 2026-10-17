@@ -39,3 +39,26 @@ describe('projectReducer', () => {
     expect(s.updatedAt >= base.updatedAt).toBe(true)
   })
 })
+
+describe('cross-section actions', () => {
+  it('keeps the project name in step with the product until renamed', () => {
+    const base = createProject('New GTM project', 'PLG')
+    let s = projectReducer(base, { type: 'setField', section: 'brief', key: 'product', value: 'Pimp My Prompt' })
+    expect(s.name).toBe('Pimp My Prompt')
+    s = projectReducer(s, { type: 'rename', name: 'Q4 launch' })
+    s = projectReducer(s, { type: 'setField', section: 'brief', key: 'product', value: 'PMP Pro' })
+    expect(s.name).toBe('Q4 launch')
+  })
+
+  it('routes channel, motion and launch-date changes through the engine rules', () => {
+    let s = createProject('X', 'Sales-led')
+    s = projectReducer(s, { type: 'selectChannel', channel: 'Paid search' })
+    expect(s.data.sections.channels.tables.rows[0].role).toBe('Conversion')
+    s = projectReducer(s, { type: 'setMotion', motion: 'PLG', replaceFunnel: true })
+    expect(s.data.sections.funnel.fields.model).toBe('PLG / self-serve')
+    s = projectReducer(s, { type: 'setLaunchDate', date: '2026-12-01' })
+    expect(s.data.sections.roadmap.tables.rows[0].due).toBe('2026-10-06')
+    const same = projectReducer(s, { type: 'selectChannel', channel: 'Paid search' })
+    expect(same).toBe(s) // no-op keeps identity (no needless re-render or save)
+  })
+})

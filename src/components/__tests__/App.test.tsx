@@ -65,4 +65,38 @@ describe('GTM Planner app', () => {
     expect((screen.getByLabelText('Product / offer') as HTMLInputElement).value).toBe('')
     expect(screen.getByRole('button', { name: 'Set a launch date' })).toBeTruthy()
   })
+
+  it('ticking a channel adds its row; unticking a worked-on channel archives it', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(within(rail()).getByRole('button', { name: /Channel strategy/ }))
+    await user.click(screen.getByLabelText(/^PR \/ media/))
+    expect((screen.getByLabelText('Channel, PR / media') as HTMLInputElement).value).toBe('PR / media')
+    await user.click(screen.getByLabelText(/^Organic social/))
+    expect(screen.queryByLabelText('Channel, Organic social')).toBeNull()
+    expect(screen.getByText(/Organic social archived with its details/)).toBeTruthy()
+    await user.click(screen.getByLabelText(/^Organic social/))
+    expect((screen.getByLabelText('KPI, Organic social') as HTMLInputElement).value).toMatch(/600/)
+  })
+
+  it('switching the motion swaps the funnel model', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.selectOptions(screen.getByLabelText('Primary GTM motion'), 'Sales-led')
+    expect(screen.getByText('Funnel switched to B2B pipeline stages.')).toBeTruthy()
+    await user.click(within(rail()).getByRole('button', { name: /Funnel & KPIs/ }))
+    expect((screen.getByLabelText('Funnel model') as HTMLSelectElement).value).toBe('B2B pipeline')
+    expect((screen.getByLabelText('Stage, MQL') as HTMLInputElement).value).toBe('MQL')
+  })
+
+  it('moving the launch date moves the roadmap', async () => {
+    render(<App />)
+    const date = screen.getByLabelText('Target launch date') as HTMLInputElement
+    const { fireEvent } = await import('@testing-library/react')
+    fireEvent.change(date, { target: { value: '2026-12-15' } })
+    expect(screen.getByText('13 roadmap dates moved with the launch date.')).toBeTruthy()
+    const user = userEvent.setup()
+    await user.click(within(rail()).getByRole('button', { name: /Execution roadmap/ }))
+    expect((screen.getByLabelText('Due date, Discovery') as HTMLInputElement).value).toBe('2026-10-20')
+  })
 })

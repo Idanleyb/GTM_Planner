@@ -1,8 +1,9 @@
 import { useEffect, useReducer, useState } from 'react'
 import fixture from './test/fixtures/prototype-pimp-my-prompt.json'
 import { SECTIONS, SECTION_BY_ID } from './config/sections'
-import type { Project, SectionId } from './config/types'
-import { createProject, migratePrototype, projectProgress } from './engine'
+import type { CellValue, Motion, Project, SectionId } from './config/types'
+import type { FunnelModel } from './config/sections'
+import { createProject, currentFunnelModel, isFunnelCustomized, migratePrototype, motionChangeImpact, projectProgress, setLaunchDate, unselectChannel } from './engine'
 import { checkConnection } from './lib/connectionCheck'
 import type { ConnectionState } from './lib/connectionCheck'
 import { supabase } from './lib/supabase'
@@ -23,6 +24,12 @@ export default function App() {
   const [current, setCurrent] = useState<SectionId>(sectionFromHash)
   const [conn, setConn] = useState<ConnectionState | null>(null)
   const [today] = useState(() => new Date())
+  const [notice, setNotice] = useState<string | null>(null)
+  useEffect(() => {
+    if (!notice) return
+    const t = setTimeout(() => setNotice(null), 6000)
+    return () => clearTimeout(t)
+  }, [notice])
   const progress = projectProgress(project.data)
 
   useEffect(() => { checkConnection(supabase).then(setConn) }, [])
@@ -37,6 +44,39 @@ export default function App() {
     if (window.location.hash !== `#/${id}`) window.history.pushState(null, '', `#/${id}`)
     window.scrollTo({ top: 0 })
     document.getElementById('main')?.focus({ preventScroll: true })
+  }
+
+  // Field edits that ripple into other sections (Step 6).
+  const onField = (sectionId: SectionId, key: string, value: CellValue) => {
+    const ref = `${sectionId}.${key}`
+    if (ref === 'brief.motion') {
+      const impact = motionChangeImpact(project.data, value as Motion)
+      const replace = impact.modelChanges && (!impact.needsConfirm ||
+        confirm(`Switch the funnel to ${impact.to} stages? Your edited stages and rates will be replaced.`))
+      dispatch({ type: 'setMotion', motion: value as Motion, replaceFunnel: replace })
+      if (impact.modelChanges) setNotice(replace ? `Funnel switched to ${impact.to} stages.` : `Kept your current funnel stages (${impact.from}).`)
+      return
+    }
+    if (ref === 'brief.launchDate') {
+      const r = setLaunchDate(project.data, String(value))
+      dispatch({ type: 'setLaunchDate', date: String(value) })
+      if (r.moved || r.kept) setNotice(`${r.moved} roadmap date${r.moved === 1 ? '' : 's'} moved with the launch date${r.kept ? `; ${r.kept} set by hand stayed put` : ''}.`)
+      return
+    }
+    if (ref === 'funnel.model') {
+      if (value === currentFunnelModel(project.data)) return
+      if (isFunnelCustomized(project.data) && !confirm(`Replace your funnel stages with the ${value} template?`)) return
+      dispatch({ type: 'setFunnelModel', model: value as FunnelModel })
+      setNotice(`Funnel stages set to the ${value} template.`)
+      return
+    }
+    dispatch({ type: 'setField', section: sectionId, key, value })
+  }
+  const onChannel = (channel: string, on: boolean) => {
+    if (on) { dispatch({ type: 'selectChannel', channel }); return }
+    const { archived } = unselectChannel(project.data, channel)
+    dispatch({ type: 'unselectChannel', channel })
+    if (archived) setNotice(`${channel} archived with its details. Tick it again to restore.`)
   }
 
   const section = SECTION_BY_ID[current]
@@ -70,8 +110,12 @@ export default function App() {
       <div className="min-w-0 flex-1">
         <MobileBar project={project} progress={progress} current={current} today={today} onNavigate={navigate} />
         <main id="main" tabIndex={-1} className="px-4 py-6 outline-none sm:px-8 lg:px-12 lg:py-10">
-          <SectionView key={current} section={section} status={status} project={project} dispatch={dispatch} onNavigate={navigate} today={today} />
+          <SectionView key={current} section={section} status={status} project={project} dispatch={dispatch} onNavigate={navigate}
+            onField={onField} onChannel={onChannel} onRecalculateRoadmap={() => { dispatch({ type: 'recalculateRoadmap' }); setNotice('All roadmap dates reset from the launch date.') }} today={today} />
         </main>
+      </div>
+      <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-4">
+        {notice && <p className="pointer-events-auto m-0 max-w-xl rounded-lg bg-ink px-4 py-3 text-sm text-white shadow-lg">{notice}</p>}
       </div>
     </div>
   )

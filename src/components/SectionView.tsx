@@ -1,11 +1,13 @@
 import type { Dispatch } from 'react'
 import { SECTIONS, SECTION_BY_ID, checklistFor } from '../config/sections'
-import type { Project, SectionDef, SectionId } from '../config/types'
+import type { CellValue, Project, SectionDef, SectionId } from '../config/types'
 import { budgetSummary } from '../engine/budget'
 import { computeFunnel, funnelInputsFrom } from '../engine/funnel'
 import type { SectionStatus } from '../engine/progress'
 import { getRef, motionOf } from '../engine/project'
 import { roadmapWarnings } from '../engine/roadmap'
+import { archivedChannels, manualRoadmapDates, selectedChannels } from '../engine/wiring'
+import { ChannelPicker } from './ChannelPicker'
 import type { ProjectAction } from '../state/projectReducer'
 import { Checklist } from './Checklist'
 import { EditableTable } from './EditableTable'
@@ -20,10 +22,14 @@ interface Props {
   project: Project
   dispatch: Dispatch<ProjectAction>
   onNavigate: (id: SectionId) => void
+  /** Field edits go through the app so cross-section rules (motion, launch date, funnel model) apply. */
+  onField: (section: SectionId, key: string, value: CellValue) => void
+  onChannel: (channel: string, on: boolean) => void
+  onRecalculateRoadmap: () => void
   today: Date
 }
 
-export function SectionView({ section, status, project, dispatch, onNavigate, today }: Props) {
+export function SectionView({ section, status, project, dispatch, onNavigate, onField, onChannel, onRecalculateRoadmap, today }: Props) {
   const data = project.data
   const sd = data.sections[section.id]
   const motion = motionOf(data)
@@ -72,7 +78,7 @@ export function SectionView({ section, status, project, dispatch, onNavigate, to
               <div key={f.key} className={f.full || f.type === 'textarea' && section.fields!.length < 5 ? 'sm:col-span-2' : ''}>
                 <label htmlFor={id} className="mb-1 block text-sm font-semibold text-ink">{label}</label>
                 <FieldInput id={id} def={f} value={sd.fields[f.key]} describedBy={f.help ? `${id}-help` : undefined}
-                  onChange={v => dispatch({ type: 'setField', section: section.id, key: f.key, value: v })} />
+                  onChange={v => onField(section.id, f.key, v)} />
                 {f.help && <p id={`${id}-help`} className="mb-0 mt-1 text-sm text-ink-muted">{f.help}</p>}
               </div>
             )
@@ -86,6 +92,10 @@ export function SectionView({ section, status, project, dispatch, onNavigate, to
       {section.calculator === 'budget' && (
         <div className="mb-8"><BudgetPanel summary={budgetSummary(data)} currency={currency} onOpenBrief={() => onNavigate('brief')} /></div>
       )}
+      {section.id === 'channels' && (
+        <ChannelPicker selected={selectedChannels(data)} archived={archivedChannels(data)} onToggle={onChannel} />
+      )}
+      {section.id === 'roadmap' && <RoadmapDates project={project} onNavigate={onNavigate} onRecalculate={onRecalculateRoadmap} />}
       {warnings.length > 0 && <div className="mb-6"><RoadmapWarnings warnings={warnings} /></div>}
 
       {section.tables?.map(tb => (
@@ -118,6 +128,21 @@ export function SectionView({ section, status, project, dispatch, onNavigate, to
         {next && <StepButton onClick={() => onNavigate(next.id)} dir="next">{next.title}</StepButton>}
       </nav>
     </article>
+  )
+}
+
+function RoadmapDates({ project, onNavigate, onRecalculate }: { project: Project; onNavigate: (id: SectionId) => void; onRecalculate: () => void }) {
+  const launch = String(getRef(project.data, 'brief.launchDate'))
+  const manual = manualRoadmapDates(project.data)
+  if (!launch) {
+    return <p className="mb-6 text-sm text-ink-soft">Due dates fill in automatically once the brief has a launch date. <LinkButton onClick={() => onNavigate('brief')}>Set the launch date</LinkButton></p>
+  }
+  const when = new Date(launch + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  return (
+    <p className="mb-6 text-sm text-ink-soft">
+      Due dates follow the launch date ({when}) and move when it changes.
+      {manual > 0 && <> {manual} date{manual === 1 ? ' was' : 's were'} set by hand and won’t move. <LinkButton onClick={() => { if (confirm('Reset every due date to launch date + weeks from launch? Dates you set by hand will be replaced.')) onRecalculate() }}>Reset all dates</LinkButton></>}
+    </p>
   )
 }
 

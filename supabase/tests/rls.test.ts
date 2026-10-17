@@ -31,7 +31,7 @@ let aliceWs = '', projectId = ''
 beforeAll(async () => {
   await db.exec(readFileSync(join(__dirname, 'supabase-shim.sql'), 'utf8'))
   for (const f of readdirSync(dir).sort()) await db.exec(readFileSync(join(dir, f), 'utf8'))
-})
+}, 60_000) // PGlite boot can be slow when the whole suite runs in parallel
 
 describe('Supabase schema + RLS', () => {
   it('sign-up creates a profile and a personal workspace with the user as sole owner', async () => {
