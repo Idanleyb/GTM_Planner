@@ -154,7 +154,7 @@ export function EditorPage({ services, initial, section: current, role, user, on
             {section && status ? (
               <SectionView key={current} section={section} status={status} project={project} dispatch={dispatch} onNavigate={go}
                 onField={onField} onChannel={onChannel}
-                onRecalculateRoadmap={() => { dispatch({ type: 'recalculateRoadmap' }); setNotice('All roadmap dates reset from the launch date.') }} today={today} />
+                onRecalculateRoadmap={() => { dispatch({ type: 'recalculateRoadmap' }); setNotice('All roadmap dates reset from the launch date.') }} today={today} ai={services.ai} />
             ) : current === 'tasks'
               ? <TasksView project={project} dispatch={dispatch} today={today} onNavigate={go} />
               : <SummaryView project={project} today={today} onNavigate={go} />}

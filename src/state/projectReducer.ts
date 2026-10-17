@@ -11,7 +11,7 @@ export type ProjectAction =
   | { type: 'rename'; name: string }
   | { type: 'setField'; section: SectionId; key: string; value: CellValue }
   | { type: 'setCell'; section: SectionId; table: string; rowId: string; key: string; value: CellValue }
-  | { type: 'addRow'; section: SectionId; table: string }
+  | { type: 'addRow'; section: SectionId; table: string; values?: Record<string, CellValue> }
   | { type: 'deleteRow'; section: SectionId; table: string; rowId: string }
   | { type: 'moveRow'; section: SectionId; table: string; rowId: string; direction: -1 | 1 }
   | { type: 'toggleCheck'; section: SectionId; itemId: string; checked: boolean }
@@ -66,7 +66,7 @@ export function projectReducer(state: Project, action: ProjectAction): Project {
       const def = tableDef(SECTION_BY_ID[action.section], action.table)
       if (!def) return state
       return withSection(state, action.section, s => ({
-        ...s, tables: { ...s.tables, [action.table]: [...(s.tables[action.table] ?? []), createRow({ ...def.blankRow })] },
+        ...s, tables: { ...s.tables, [action.table]: [...(s.tables[action.table] ?? []), createRow({ ...def.blankRow, ...(action.values ?? {}) })] },
       }))
     }
     case 'deleteRow':

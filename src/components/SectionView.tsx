@@ -8,6 +8,9 @@ import { getRef, motionOf } from '../engine/project'
 import { roadmapWarnings } from '../engine/roadmap'
 import { archivedChannels, manualRoadmapDates, selectedChannels } from '../engine/wiring'
 import { ChannelPicker } from './ChannelPicker'
+import { AiAssist } from './AiAssist'
+import type { AiService } from '../services/types'
+import { useReadOnly } from './ReadOnly'
 import { LaunchReviewPanel } from './LaunchReviewPanel'
 import { launchReview } from '../engine/launchReview'
 import type { PlanView } from '../router'
@@ -30,9 +33,12 @@ interface Props {
   onChannel: (channel: string, on: boolean) => void
   onRecalculateRoadmap: () => void
   today: Date
+  /** AI assist; absent in demo mode. */
+  ai?: AiService
 }
 
-export function SectionView({ section, status, project, dispatch, onNavigate, onField, onChannel, onRecalculateRoadmap, today }: Props) {
+export function SectionView({ section, status, project, dispatch, onNavigate, onField, onChannel, onRecalculateRoadmap, today, ai }: Props) {
+  const readOnly = useReadOnly()
   const data = project.data
   const sd = data.sections[section.id]
   const motion = motionOf(data)
@@ -51,6 +57,11 @@ export function SectionView({ section, status, project, dispatch, onNavigate, on
         <h1 id={`${p}-title`} className="m-0 mt-1 text-3xl font-bold tracking-tight text-ink">{section.title}</h1>
         <p className="mb-0 mt-2 max-w-[68ch] text-ink-soft">{section.intro}</p>
         <GateLine status={status} />
+        {ai && (
+          <AiAssist ai={ai} section={section} project={project} today={today} canEdit={!readOnly}
+            onApplyField={(key, value) => onField(section.id, key, value)}
+            onApplyRow={(table, values) => dispatch({ type: 'addRow', section: section.id, table, values })} />
+        )}
       </header>
 
       {section.id === 'launch' && <LaunchReviewPanel review={launchReview(data, today)} onNavigate={onNavigate} />}

@@ -4,7 +4,8 @@ import {
   deleteProject, getProject, insertProject, listWorkspaces, logActivity, projectColumns, rowToProject, saveProject, setArchived,
 } from '../lib/projectsRepo'
 import type { DbClient } from '../lib/supabase'
-import type { AuthService, Invite, Member, ProjectListResult, Services, StoreService, User } from './types'
+import type { AiService, AuthService, Invite, Member, ProjectListResult, Services, StoreService, User } from './types'
+import { AiError } from './types'
 
 const fail = (what: string, error: { message: string } | null | undefined): never => {
   throw new Error(`${what}: ${error?.message ?? 'unknown error'}`)
@@ -134,8 +135,23 @@ export function supabaseStore(db: DbClient): StoreService {
   }
 }
 
+export function supabaseAi(db: DbClient): AiService {
+  return {
+    async run(req) {
+      const { data, error } = await db.functions.invoke('ai-assist', { body: req })
+      if (!error) return data
+      // FunctionsHttpError carries the function's JSON response in `context`.
+      const ctx = (error as { context?: Response }).context
+      let body: { error?: string; code?: string; remaining?: number } = {}
+      try { if (ctx && typeof ctx.json === 'function') body = await ctx.json() } catch { /* not JSON */ }
+      if (!body.error && /not found|404/i.test(error.message)) throw new AiError('AI assist isn’t deployed yet. See docs/AI_SETUP.md.', 'not_deployed')
+      throw new AiError(body.error ?? 'Couldn’t reach AI assist. Check your connection and try again.', body.code ?? 'network', body.remaining)
+    },
+  }
+}
+
 export function supabaseServices(db: DbClient): Services {
-  return { auth: supabaseAuth(db), store: supabaseStore(db), mode: 'supabase' }
+  return { auth: supabaseAuth(db), store: supabaseStore(db), ai: supabaseAi(db), mode: 'supabase' }
 }
 
 // Kept for callers that only need the mapping helper.

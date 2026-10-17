@@ -3,6 +3,7 @@
 import type { Project } from '../config/types'
 import type { WorkspaceRole } from '../lib/database.types'
 import type { SaveResult, StoredProject } from '../lib/projectsRepo'
+import type { AiRequest, AiResult } from '../../supabase/functions/_shared/aiLogic'
 
 export type { SaveResult, StoredProject, WorkspaceRole }
 
@@ -47,9 +48,25 @@ export interface StoreService {
   removeMember(workspaceId: string, userId: string): Promise<void>
 }
 
+export interface AiResponse { result: AiResult; remaining: number; limit: number }
+export class AiError extends Error {
+  code: string
+  remaining?: number
+  constructor(message: string, code: string, remaining?: number) {
+    super(message)
+    this.code = code
+    this.remaining = remaining
+  }
+}
+export interface AiService {
+  run(req: AiRequest): Promise<AiResponse>
+}
+
 export interface Services {
   auth: AuthService
   store: StoreService
+  /** Missing when AI assist isn't available (demo mode). */
+  ai?: AiService
   /** 'supabase' saves to the database; 'memory' keeps everything in this tab. */
   mode: 'supabase' | 'memory'
 }

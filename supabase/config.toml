@@ -1,0 +1,6 @@
+# Minimal Supabase CLI config, used for `supabase link` and `supabase functions deploy`.
+project_id = "gtm-planner"
+
+[functions.ai-assist]
+# Only signed-in users can call the function; it also checks plan access itself.
+verify_jwt = true

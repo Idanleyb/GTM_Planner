@@ -27,3 +27,7 @@ dist-ssr
 dist-demo
 test-results
 playwright-report
+
+# Supabase CLI
+supabase/.temp
+supabase/.branches

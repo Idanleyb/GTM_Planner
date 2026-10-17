@@ -20,6 +20,11 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check the ai-assist Edge Function
+        run: deno check supabase/functions/ai-assist/index.ts
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e
         env:

@@ -6,6 +6,9 @@ import App from '../../App'
 import fixture from '../../test/fixtures/prototype-pimp-my-prompt.json'
 import { migratePrototype } from '../../engine'
 import { memoryServices } from '../../services/memoryServices'
+import { AiError } from '../../services/types'
+import type { AiService } from '../../services/types'
+import { validateResult } from '../../../supabase/functions/_shared/aiLogic'
 
 beforeEach(() => {
   window.location.hash = ''
@@ -257,6 +260,97 @@ describe('tasks view and readiness review', () => {
     expect(within(panel).getByText('Launch delay')).toBeTruthy()
     await userEvent.setup().click(within(panel).getByRole('button', { name: '04 Pricing & packaging' }))
     expect(await screen.findByRole('heading', { level: 1, name: 'Pricing & packaging' })).toBeTruthy()
+  })
+})
+
+describe('AI assist', () => {
+  /** A fake AI that answers like the Edge Function does, validated by the same shared code. */
+  function fakeAi(answer: (action: string) => unknown, remaining = 29): AiService & { calls: string[] } {
+    const calls: string[] = []
+    return {
+      calls,
+      async run(req) {
+        calls.push(`${req.action}:${req.section.id}`)
+        return { result: validateResult(req, answer(req.action)), remaining, limit: 30 }
+      },
+    }
+  }
+  async function open(section: string, ai: AiService, role: 'owner' | 'viewer' = 'owner') {
+    const sample = migratePrototype(fixture).project
+    const svc = memoryServices({ projects: [sample] })
+    svc.ai = ai
+    if (role === 'viewer') svc.store.listWorkspaces = async () => [{ id: 'ws-demo', name: 'Client', role: 'viewer' }]
+    window.location.hash = `#/p/${sample.id}/${section}`
+    render(<App services={svc} />)
+    await screen.findByRole('navigation', { name: 'Plan steps' })
+    return { svc, sample }
+  }
+
+  it('drafts a step and applies suggestions only when asked', async () => {
+    const ai = fakeAi(() => ({
+      summary: 'Freemium with one paid tier, using the beta pricing evidence.',
+      fields: [
+        { key: 'model', value: 'Freemium + subscription', reason: 'PLG motion' },
+        { key: 'entryOffer', value: 'Freemium', reason: 'Free tier drives activation' },
+      ],
+      rows: [{ table: 'tiers', values: { tier: 'Pro', price: '19', billing: 'Monthly' }, reason: 'From the brief target' }],
+    }))
+    await open('pricing', ai)
+    const user = userEvent.setup()
+    const panel = screen.getByRole('region', { name: 'AI assist' })
+    await user.click(within(panel).getByRole('button', { name: 'Draft this step' }))
+    expect(await within(panel).findByText('Freemium with one paid tier, using the beta pricing evidence.')).toBeTruthy()
+    expect(within(panel).getByText('29 of 30 requests left today.', { exact: false })).toBeTruthy()
+    expect((screen.getByLabelText('Pricing model') as HTMLSelectElement).value).toBe('') // nothing applied yet
+    await user.click(within(panel).getByRole('button', { name: 'Apply Pricing model' }))
+    expect((screen.getByLabelText('Pricing model') as HTMLSelectElement).value).toBe('Freemium + subscription')
+    await user.click(within(panel).getByRole('button', { name: 'Skip Entry offer' }))
+    expect((screen.getByLabelText('Entry offer') as HTMLSelectElement).value).toBe('')
+    await user.click(within(panel).getByRole('button', { name: 'Apply row Pro' }))
+    expect((screen.getByLabelText('Tier, Pro') as HTMLInputElement).value).toBe('Pro')
+    expect((screen.getByLabelText('Price, Pro') as HTMLInputElement).value).toBe('19')
+    expect(ai.calls).toEqual(['draft:pricing'])
+  })
+
+  it('applies everything at once', async () => {
+    const ai = fakeAi(() => ({ summary: 'Filled.', fields: [{ key: 'model', value: 'Subscription', reason: '' }, { key: 'entryOffer', value: 'Free trial', reason: '' }], rows: [] }))
+    await open('pricing', ai)
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('button', { name: 'Fill the gaps' }))
+    await user.click(await screen.findByRole('button', { name: 'Apply all' }))
+    expect((screen.getByLabelText('Pricing model') as HTMLSelectElement).value).toBe('Subscription')
+    expect((screen.getByLabelText('Entry offer') as HTMLSelectElement).value).toBe('Free trial')
+  })
+
+  it('shows a critique ranked by risk', async () => {
+    const ai = fakeAi(() => ({ summary: 'Channels are solid but two gaps matter.', findings: [
+      { severity: 'low', issue: 'Inconsistent owner names', suggestion: 'Use one name per person' },
+      { severity: 'high', issue: 'Paid social budget exceeds the funnel spend', suggestion: 'Cut to USD 5,000 or raise the target' },
+    ] }))
+    await open('channels', ai)
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Critique' }))
+    const items = await screen.findAllByText(/High risk|Low/, { selector: 'span' })
+    expect(items.map(i => i.textContent)).toEqual(['High risk', 'Low'])
+    expect(screen.getByText('Paid social budget exceeds the funnel spend')).toBeTruthy()
+  })
+
+  it('lets viewers critique but not draft', async () => {
+    await open('channels', fakeAi(() => ({ summary: 'ok', findings: [] })), 'viewer')
+    const panel = screen.getByRole('region', { name: 'AI assist' })
+    expect(within(panel).queryByRole('button', { name: 'Draft this step' })).toBeNull()
+    expect(within(panel).getByRole('button', { name: 'Critique' })).toBeTruthy()
+  })
+
+  it('shows the limit message from the server', async () => {
+    const ai: AiService = { async run() { throw new AiError('You’ve used all 30 AI requests for the last 24 hours. Try again later.', 'limit', 0) } }
+    await open('brief', ai)
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Draft this step' }))
+    expect((await screen.findByRole('alert')).textContent).toMatch(/used all 30 AI requests/)
+  })
+
+  it('is hidden when AI isn’t available (demo mode)', async () => {
+    await openSample('brief')
+    expect(screen.queryByRole('region', { name: 'AI assist' })).toBeNull()
   })
 })
 

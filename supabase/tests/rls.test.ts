@@ -135,4 +135,14 @@ describe('Supabase schema + RLS', () => {
     expect(await as(DAN, () => q('select public.accept_pending_invites() as n'))).toEqual([{ n: 0 }])
     await expect(as(null, () => q('select public.accept_pending_invites()'))).rejects.toThrow(/permission denied/)
   })
+
+  it('AI usage: users read only their own rows and cannot write any', async () => {
+    const dan = '00000000-0000-0000-0000-00000000000d'
+    await db.query(`insert into ai_usage (user_id, section_id, action, model, input_tokens, output_tokens) values ($1, 'pricing', 'draft', 'claude-sonnet-5-5', 1000, 400), ($2, 'brief', 'fill', 'claude-sonnet-5-5', 10, 10)`, [dan, CAROL])
+    expect(await as(dan, () => q('select section_id from ai_usage'))).toEqual([{ section_id: 'pricing' }])
+    await expect(as(dan, () => q(`insert into ai_usage (user_id, section_id, action, model) values ($1, 'x', 'draft', 'm')`, [dan]))).rejects.toThrow(/row-level security/)
+    expect(await as(dan, () => affected('delete from ai_usage'))).toBe(0)
+    await expect(as(null, () => q('select * from ai_usage'))).rejects.toThrow(/permission denied/)
+  })
 })
+

@@ -31,6 +31,8 @@ npm run build      # typecheck + production build
 | `src/services/` | Backend interface with a Supabase implementation and an in-memory one (tests, and demo mode when Supabase isn't configured) |
 | `src/engine/summary.ts` | Builds the plan summary once; the summary page and the Word file both render it |
 | `src/lib/` | Supabase client, hand-written DB types, project data validation (zod), projects/workspaces data access with conflict-safe saves |
+| `supabase/functions/` | `ai-assist` Edge Function (Deno) and `_shared/aiLogic.ts`, the prompt, tool schema and answer validation shared with the app |
+| `src/ai/` | Builds what the AI sees: the current step and a text summary of the rest of the plan |
 | `supabase/migrations/` | Database schema, triggers and Row Level Security policies |
 | `supabase/tests/` | Runs the migration on in-memory Postgres (PGlite) and tests access rules per role |
 | `src/test/fixtures/` | Prototype JSON export used as test data |
@@ -65,5 +67,5 @@ Key rules:
 - [x] Step 9 (part) + Step 10 (part) — Plan summary page (`#/p/<id>/summary`): key facts, readiness by phase, what's missing, work due in 14 days, and every part of the plan; **Download Word doc** (navy/amber, A4, page numbers) from the summary, the rail and the plans list; print / save as PDF
 - [x] Step 9 — Tasks view (`#/p/<id>/tasks`): every channel, asset, calendar item, team deliverable, milestone and risk in one list; filter by open / overdue / due in 7 days / no owner / done, owner, step and search; edit owner, due date and status inline; CSV export. Readiness review on the Go / no-go step: verdict, steps before launch that aren't ready, open high-impact risks, overdue work
 - [x] Step 10 — exports: JSON (plans list, rail), task CSV (Tasks view), Word summary (summary page, rail, plans list)
-- [ ] Step 11 — AI assist
+- [x] Step 11 — AI assist: Draft this step, Fill the gaps, Critique on every step (Claude via the `ai-assist` Edge Function); suggestions are reviewed and applied one by one or all at once; viewers can critique; per-user daily limit. Setup: [`docs/AI_SETUP.md`](docs/AI_SETUP.md)
 - [x] Step 12 — browser tests (Playwright, `npm run e2e`), GitHub Actions CI, Vercel config with security headers. Deploy steps: [`docs/DEPLOY.md`](docs/DEPLOY.md)
