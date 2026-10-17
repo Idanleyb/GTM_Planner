@@ -10,7 +10,7 @@
 // The caller's own token is used to check access, so Row Level Security decides
 // whether they can see the plan. Viewers may ask for a critique; drafting and
 // gap-filling need editor or owner.
-import { parseRequest, systemPrompt, toolFor, userPrompt, validateResult } from '../_shared/aiLogic.ts'
+import { answerFrom, outputSchemaFor, parseRequest, systemPrompt, userPrompt, validateResult } from '../_shared/aiLogic.ts'
 
 // Minimal surface of supabase-js used here, so tests can pass a fake.
 // deno-lint-ignore no-explicit-any
@@ -103,8 +103,7 @@ export function createHandler(deps: Deps): (req: Request) => Promise<Response> {
       return fail(429, 'limit', `You’ve used all ${DAILY_LIMIT} AI requests for the last 24 hours. Try again later.`, { remaining: 0, limit: DAILY_LIMIT })
     }
 
-    // Ask Claude, forcing the answer into the tool's JSON shape.
-    const tool = toolFor(body)
+    // Ask Claude, with structured output so the answer always matches the schema.
     let response: Response
     try {
       response = await deps.fetch('https://api.anthropic.com/v1/messages', {
@@ -115,8 +114,7 @@ export function createHandler(deps: Deps): (req: Request) => Promise<Response> {
           max_tokens: 4000,
           system: systemPrompt(),
           messages: [{ role: 'user', content: userPrompt(body) }],
-          tools: [tool],
-          tool_choice: { type: 'tool', name: tool.name },
+          output_config: { format: { type: 'json_schema', schema: outputSchemaFor(body) } },
         }),
       })
     } catch (e) {
@@ -129,8 +127,12 @@ export function createHandler(deps: Deps): (req: Request) => Promise<Response> {
       return fail(502, 'upstream', upstreamMessage(response.status, detail), { upstreamStatus: response.status })
     }
     const message = await response.json()
-    const toolUse = (message.content ?? []).find((c: { type: string }) => c.type === 'tool_use')
-    const result = validateResult(body, toolUse?.input)
+    const answer = answerFrom(message)
+    if (answer.problem) {
+      log('unusable answer', message.stop_reason, answer.problem)
+      return fail(502, 'upstream', answer.problem)
+    }
+    const result = validateResult(body, answer.data)
 
     const { error: logError } = await admin.from('ai_usage').insert({
       user_id: user.id, project_id: project.id, section_id: body.section.id, action: body.action, model: MODEL,

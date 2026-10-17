@@ -35,7 +35,8 @@ function setup(world: Partial<World> = {}, opts: { claude?: unknown; status?: nu
   const w: World = { user: { id: 'u1' }, role: 'editor', inserts: [], ...world }
   const env: Record<string, string> = { ANTHROPIC_API_KEY: 'sk-test', SUPABASE_URL: 'https://x.supabase.co', SUPABASE_ANON_KEY: 'anon', SUPABASE_SERVICE_ROLE_KEY: 'service', AI_DAILY_LIMIT: '3', ...opts.env }
   const fetchMock = vi.fn(async (_url: string | URL | Request, _init?: RequestInit) => new Response(JSON.stringify(opts.claude ?? {
-    content: [{ type: 'tool_use', name: 'propose_changes', input: { summary: 'Freemium with Pro.', fields: [{ key: 'model', value: 'Freemium + subscription', reason: 'PLG' }], rows: [{ table: 'tiers', values: { tier: 'Pro', price: '19' }, reason: '' }] } }],
+    content: [{ type: 'text', text: JSON.stringify({ summary: 'Freemium with Pro.', fields: [{ key: 'model', value: 'Freemium + subscription', reason: 'PLG' }], rows: [{ table: 'tiers', values: [{ column: 'tier', value: 'Pro' }, { column: 'price', value: '19' }], reason: '' }] }) }],
+    stop_reason: 'end_turn',
     usage: { input_tokens: 1200, output_tokens: 300 },
   }), { status: opts.status ?? 200 }))
   const handler = createHandler({
@@ -57,7 +58,10 @@ describe('ai-assist handler', () => {
     expect(body.result.rows[0].values).toEqual({ tier: 'Pro', price: 19 })
     expect(w.inserts).toEqual([expect.objectContaining({ user_id: 'u1', section_id: 'pricing', action: 'draft', model: 'claude-sonnet-5-5', input_tokens: 1200, output_tokens: 300 })])
     const sent = JSON.parse(String(fetchMock.mock.calls[0][1]?.body))
-    expect(sent.tool_choice).toEqual({ type: 'tool', name: 'propose_changes' })
+    expect(sent.tool_choice).toBeUndefined()
+    expect(sent.tools).toBeUndefined()
+    expect(sent.output_config.format.type).toBe('json_schema')
+    expect(sent.output_config.format.schema.additionalProperties).toBe(false)
     expect(sent.model).toBe('claude-sonnet-5-5')
     expect((fetchMock.mock.calls[0][1]!.headers as Record<string, string>)['x-api-key']).toBe('sk-test')
   })
@@ -81,7 +85,7 @@ describe('ai-assist handler', () => {
   })
 
   it('lets viewers ask for a critique', async () => {
-    const { call } = setup({ role: 'viewer' }, { claude: { content: [{ type: 'tool_use', input: { summary: 'Thin.', findings: [{ severity: 'high', issue: 'No tiers', suggestion: 'Add Free and Pro' }] } }], usage: {} } })
+    const { call } = setup({ role: 'viewer' }, { claude: { content: [{ type: 'text', text: JSON.stringify({ summary: 'Thin.', findings: [{ severity: 'high', issue: 'No tiers', suggestion: 'Add Free and Pro', field: 'tiers' }] }) }], usage: {} } })
     const res = await call(pricingReq('critique'))
     expect(res.status).toBe(200)
     expect((await res.json()).result.findings).toHaveLength(1)
@@ -125,4 +129,13 @@ describe('ai-assist handler', () => {
     const pre = await handler(new Request('https://fn/ai-assist', { method: 'OPTIONS' }))
     expect(pre.headers.get('Access-Control-Allow-Headers')).toMatch(/authorization/)
   })
+
+  it('reports an unreadable or cut-off answer without counting it', async () => {
+    const { call, w } = setup({}, { claude: { content: [{ type: 'text', text: '{"summary": "trunc' }], stop_reason: 'max_tokens', usage: {} } })
+    const res = await call()
+    expect(res.status).toBe(502)
+    expect((await res.json()).error).toMatch(/cut off/)
+    expect(w.inserts).toEqual([])
+  })
 })
+

@@ -93,60 +93,61 @@ export function userPrompt(req: AiRequest): string {
   ].join('\n')
 }
 
-export function toolFor(req: AiRequest): { name: string; description: string; input_schema: Record<string, unknown> } {
+/**
+ * JSON schema for Claude's answer, sent as structured output (output_config.format).
+ * Structured-output rules: every object sets additionalProperties: false, no maxItems,
+ * enums only of strings. Row values are a list of {column, value} pairs for that reason.
+ */
+export function outputSchemaFor(req: AiRequest): Record<string, unknown> {
+  const obj = (properties: Record<string, unknown>) => ({ type: 'object', properties, required: Object.keys(properties), additionalProperties: false })
+  const str = (description?: string) => (description ? { type: 'string', description } : { type: 'string' })
+  const oneOf = (values: string[], description?: string) => (values.length ? { type: 'string', enum: values, ...(description ? { description } : {}) } : str(description))
+
   if (req.action === 'critique') {
-    return {
-      name: 'report_findings',
-      description: 'Report the critique of this plan step.',
-      input_schema: {
-        type: 'object', required: ['summary', 'findings'],
-        properties: {
-          summary: { type: 'string', description: 'One or two sentences: the overall state of this step.' },
-          findings: {
-            type: 'array', maxItems: 8,
-            items: {
-              type: 'object', required: ['severity', 'issue', 'suggestion'],
-              properties: {
-                severity: { type: 'string', enum: ['high', 'medium', 'low'] },
-                issue: { type: 'string' },
-                suggestion: { type: 'string', description: 'A concrete next action.' },
-                field: { type: 'string', description: 'Field key or table key this applies to, if any.' },
-              },
-            },
-          },
-        },
+    const targets = [...req.section.fields.map(f => f.key), ...req.section.tables.map(t => t.key)]
+    return obj({
+      summary: str('One or two sentences: the overall state of this step.'),
+      findings: {
+        type: 'array', description: 'Up to 8 findings, most serious first.',
+        items: obj({
+          severity: oneOf(['high', 'medium', 'low']),
+          issue: str(),
+          suggestion: str('A concrete next action.'),
+          field: oneOf(['', ...targets], 'Field or table key this applies to, or empty.'),
+        }),
       },
-    }
+    })
   }
-  const fieldKeys = req.section.fields.map(f => f.key)
-  const tableKeys = req.section.tables.map(t => t.key)
-  return {
-    name: 'propose_changes',
-    description: 'Propose values for this plan step. The user reviews each proposal before it is applied.',
-    input_schema: {
-      type: 'object', required: ['summary', 'fields', 'rows'],
-      properties: {
-        summary: { type: 'string', description: 'One sentence on what you proposed and the main assumption behind it.' },
-        fields: {
-          type: 'array',
-          items: {
-            type: 'object', required: ['key', 'value', 'reason'],
-            properties: { key: fieldKeys.length ? { type: 'string', enum: fieldKeys } : { type: 'string' }, value: { type: 'string' }, reason: { type: 'string' } },
-          },
-        },
-        rows: {
-          type: 'array',
-          items: {
-            type: 'object', required: ['table', 'values', 'reason'],
-            properties: {
-              table: tableKeys.length ? { type: 'string', enum: tableKeys } : { type: 'string' },
-              values: { type: 'object', additionalProperties: { type: 'string' }, description: 'Column key to value.' },
-              reason: { type: 'string' },
-            },
-          },
-        },
-      },
+
+  const columnKeys = [...new Set(req.section.tables.flatMap(t => t.columns.map(c => c.key)))]
+  return obj({
+    summary: str('One sentence on what you proposed and the main assumption behind it.'),
+    fields: {
+      type: 'array', description: 'Proposed field values. Leave empty if none.',
+      items: obj({ key: oneOf(req.section.fields.map(f => f.key)), value: str(), reason: str() }),
     },
+    rows: {
+      type: 'array', description: `New table rows, at most ${LIMITS.rowsPerTable} per table. Leave empty if none.`,
+      items: obj({
+        table: oneOf(req.section.tables.map(t => t.key)),
+        values: { type: 'array', description: 'Column values for the new row.', items: obj({ column: oneOf(columnKeys), value: str() }) },
+        reason: str(),
+      }),
+    },
+  })
+}
+
+/** Extract Claude's JSON answer from a Messages API response (structured output arrives as text). */
+export function answerFrom(message: unknown): { data: unknown; problem: string | null } {
+  const m = (message ?? {}) as { content?: { type: string; text?: string; input?: unknown }[]; stop_reason?: string }
+  if (m.stop_reason === 'refusal') return { data: null, problem: 'Claude declined to answer this request.' }
+  const block = (m.content ?? []).find(c => c.type === 'text' && typeof c.text === 'string') ?? (m.content ?? []).find(c => c.type === 'tool_use')
+  if (!block) return { data: null, problem: 'Claude returned no answer.' }
+  if (block.type === 'tool_use') return { data: block.input, problem: null }
+  try {
+    return { data: JSON.parse(block.text!), problem: null }
+  } catch {
+    return { data: null, problem: m.stop_reason === 'max_tokens' ? 'Claude’s answer was cut off. Try Fill the gaps, which asks for less.' : 'Claude’s answer couldn’t be read. Try again.' }
   }
 }
 
@@ -211,7 +212,9 @@ export function validateResult(req: AiRequest, raw: unknown): AiResult {
   const rows = (Array.isArray(o.rows) ? o.rows : []).flatMap((p): RowProposal[] => {
     const x = (p ?? {}) as Record<string, unknown>
     const t = req.section.tables.find(tb => tb.key === x.table)
-    const vals = (x.values && typeof x.values === 'object' ? x.values : {}) as Record<string, unknown>
+    const vals: Record<string, unknown> = Array.isArray(x.values)
+      ? Object.fromEntries((x.values as Record<string, unknown>[]).map(v => [String(v?.column ?? ''), v?.value]))
+      : (x.values && typeof x.values === 'object' ? x.values as Record<string, unknown> : {})
     if (!t) { dropped++; return [] }
     const values: Record<string, Cell> = {}
     for (const c of t.columns) { const v = coerce(vals[c.key], c); if (v !== null) values[c.key] = v }
