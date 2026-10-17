@@ -10,12 +10,18 @@ Project: `qwjtocmtsbbnezmyxymd` — https://supabase.com/dashboard/project/qwjto
 
 Alternative with the CLI: `npx supabase link --project-ref qwjtocmtsbbnezmyxymd` then `npx supabase db push`.
 
-## 2. Auth settings (needed for Step 8, safe to do now)
+### 1b. Second migration (Step 8)
+
+Also run `supabase/migrations/20261017200000_accept_invites.sql` in the SQL editor. It lets someone who already has an account join a workspace they were invited to the next time they sign in.
+
+## 2. Auth settings
 
 - **Authentication → Sign In / Providers → Email**: enabled (magic link).
 - **Authentication → URL Configuration**:
   - Site URL: `http://localhost:5173` for now; switch to the Vercel URL after deploy.
   - Redirect URLs: `http://localhost:5173/**` and later `https://<your-vercel-domain>/**`.
+- Open the sign-in link **in the same browser** you requested it from (the app uses the secure PKCE flow, which ties the link to that browser).
+- Supabase's built-in email sender allows only a few sign-in emails per hour. If you hit the limit while testing, wait, or set up your own SMTP under **Authentication → Emails → SMTP Settings** (e.g. Resend, Postmark).
 
 ## 3. Local environment
 

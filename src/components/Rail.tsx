@@ -72,7 +72,7 @@ export function Rail({ project, progress, current, today, onNavigate, footer }: 
 }
 
 /** Compact header for small screens: countdown, progress and a step picker. */
-export function MobileBar({ project, progress, current, today, onNavigate }: Omit<Props, 'footer'>) {
+export function MobileBar({ project, progress, current, today, onNavigate, status }: Omit<Props, 'footer'> & { status?: React.ReactNode }) {
   const countdown = launchCountdown(String(project.data.sections.brief.fields.launchDate ?? ''), today)
   return (
     <header className="sticky top-0 z-10 bg-ink px-4 py-3 text-white lg:hidden">
@@ -93,6 +93,7 @@ export function MobileBar({ project, progress, current, today, onNavigate }: Omi
         ))}
       </select>
       <p className="m-0 mt-2 text-xs text-white/70">{progress.overall.pct}% complete, {progress.sectionsReady.done} of {progress.sectionsReady.total} steps ready</p>
+      {status && <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs">{status}</div>}
     </header>
   )
 }

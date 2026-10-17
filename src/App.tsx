@@ -1,122 +1,105 @@
-import { useEffect, useReducer, useState } from 'react'
-import fixture from './test/fixtures/prototype-pimp-my-prompt.json'
-import { SECTIONS, SECTION_BY_ID } from './config/sections'
-import type { CellValue, Motion, Project, SectionId } from './config/types'
-import type { FunnelModel } from './config/sections'
-import { createProject, currentFunnelModel, isFunnelCustomized, migratePrototype, motionChangeImpact, projectProgress, setLaunchDate, unselectChannel } from './engine'
-import { checkConnection } from './lib/connectionCheck'
-import type { ConnectionState } from './lib/connectionCheck'
-import { supabase } from './lib/supabase'
-import { projectReducer } from './state/projectReducer'
-import { MobileBar, Rail } from './components/Rail'
-import { SectionView } from './components/SectionView'
+import { useCallback, useEffect, useState } from 'react'
+import { useRoute } from './router'
+import { defaultServices } from './services/defaultServices'
+import type { Services, User, Workspace } from './services/types'
+import { friendlyError } from './services/types'
+import { AppShell } from './pages/AppShell'
+import { ProjectLoader } from './pages/EditorPage'
+import { ProjectsPage } from './pages/ProjectsPage'
+import { SignInPage } from './pages/SignInPage'
+import { TeamPage } from './pages/TeamPage'
 
-// Until auth + autosave land (Steps 7–8), the app works on an in-memory project:
-// the migrated Pimp My Prompt test plan, or a fresh empty one.
-const sample = (): Project => migratePrototype(fixture).project
-const sectionFromHash = (): SectionId => {
-  const id = window.location.hash.replace(/^#\/?/, '') as SectionId
-  return SECTION_BY_ID[id] ? id : SECTIONS[0].id
-}
+const WS_KEY = 'gtm-planner.workspace'
+const readWs = () => { try { return localStorage.getItem(WS_KEY) } catch { return null } }
+const writeWs = (id: string) => { try { localStorage.setItem(WS_KEY, id) } catch { /* storage unavailable */ } }
 
-export default function App() {
-  const [project, dispatch] = useReducer(projectReducer, undefined, sample)
-  const [current, setCurrent] = useState<SectionId>(sectionFromHash)
-  const [conn, setConn] = useState<ConnectionState | null>(null)
-  const [today] = useState(() => new Date())
-  const [notice, setNotice] = useState<string | null>(null)
+export default function App({ services: provided }: { services?: Services }) {
+  const [services] = useState<Services>(() => provided ?? defaultServices())
+  const route = useRoute()
+  const [user, setUser] = useState<User | null | undefined>(undefined)
+  // Workspaces are tagged with the user they were loaded for, so a sign-out never shows stale ones.
+  const [loaded, setLoaded] = useState<{ userId: string; list: Workspace[] } | null>(null)
+  const [workspaceId, setWorkspaceId] = useState<string | null>(readWs)
+  const [error, setError] = useState<string | null>(null)
+
+  // Session: initial check + live updates (sign-in from the email link, sign-out, token refresh).
   useEffect(() => {
-    if (!notice) return
-    const t = setTimeout(() => setNotice(null), 6000)
-    return () => clearTimeout(t)
-  }, [notice])
-  const progress = projectProgress(project.data)
+    let alive = true
+    services.auth.getUser().then(u => { if (alive) setUser(u) }).catch(() => { if (alive) setUser(null) })
+    const off = services.auth.onChange(u => setUser(u))
+    return () => { alive = false; off() }
+  }, [services])
 
-  useEffect(() => { checkConnection(supabase).then(setConn) }, [])
+  // Remove the one-time ?code= from the address bar after the email link signs the user in.
   useEffect(() => {
-    const onHash = () => setCurrent(sectionFromHash())
-    window.addEventListener('hashchange', onHash)
-    return () => window.removeEventListener('hashchange', onHash)
-  }, [])
+    if (user && window.location.search.includes('code=')) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.hash)
+    }
+  }, [user])
 
-  const navigate = (id: SectionId) => {
-    setCurrent(id)
-    if (window.location.hash !== `#/${id}`) window.history.pushState(null, '', `#/${id}`)
-    window.scrollTo({ top: 0 })
-    document.getElementById('main')?.focus({ preventScroll: true })
+  const userId = user?.id
+  const loadWorkspaces = useCallback(async () => {
+    if (!userId) return
+    try {
+      const list = await services.store.listWorkspaces()
+      setLoaded({ userId, list })
+      setError(null)
+    } catch (e) { setError(friendlyError(e)) }
+  }, [services, userId])
+
+  useEffect(() => {
+    if (!userId) return
+    let alive = true
+    ;(async () => {
+      await services.store.acceptInvites().catch(() => 0)
+      if (alive) await loadWorkspaces()
+    })()
+    return () => { alive = false }
+  }, [userId, services, loadWorkspaces])
+  const workspaces = loaded && loaded.userId === userId ? loaded.list : null
+
+  const signOut = async () => {
+    try { await services.auth.signOut() } finally { setUser(null); window.location.hash = '#/' }
   }
 
-  // Field edits that ripple into other sections (Step 6).
-  const onField = (sectionId: SectionId, key: string, value: CellValue) => {
-    const ref = `${sectionId}.${key}`
-    if (ref === 'brief.motion') {
-      const impact = motionChangeImpact(project.data, value as Motion)
-      const replace = impact.modelChanges && (!impact.needsConfirm ||
-        confirm(`Switch the funnel to ${impact.to} stages? Your edited stages and rates will be replaced.`))
-      dispatch({ type: 'setMotion', motion: value as Motion, replaceFunnel: replace })
-      if (impact.modelChanges) setNotice(replace ? `Funnel switched to ${impact.to} stages.` : `Kept your current funnel stages (${impact.from}).`)
-      return
-    }
-    if (ref === 'brief.launchDate') {
-      const r = setLaunchDate(project.data, String(value))
-      dispatch({ type: 'setLaunchDate', date: String(value) })
-      if (r.moved || r.kept) setNotice(`${r.moved} roadmap date${r.moved === 1 ? '' : 's'} moved with the launch date${r.kept ? `; ${r.kept} set by hand stayed put` : ''}.`)
-      return
-    }
-    if (ref === 'funnel.model') {
-      if (value === currentFunnelModel(project.data)) return
-      if (isFunnelCustomized(project.data) && !confirm(`Replace your funnel stages with the ${value} template?`)) return
-      dispatch({ type: 'setFunnelModel', model: value as FunnelModel })
-      setNotice(`Funnel stages set to the ${value} template.`)
-      return
-    }
-    dispatch({ type: 'setField', section: sectionId, key, value })
+  if (user === undefined) return <Splash text="Loading…" />
+  if (user === null) {
+    return <SignInPage auth={services.auth} demo={services.mode === 'memory'}
+      onDemo={services.mode === 'memory' ? () => void services.auth.sendMagicLink('demo@example.com') : undefined} />
   }
-  const onChannel = (channel: string, on: boolean) => {
-    if (on) { dispatch({ type: 'selectChannel', channel }); return }
-    const { archived } = unselectChannel(project.data, channel)
-    dispatch({ type: 'unselectChannel', channel })
-    if (archived) setNotice(`${channel} archived with its details. Tick it again to restore.`)
+  if (error) return <Splash text={error} action={<button type="button" onClick={() => void loadWorkspaces()} className="mt-4 rounded-md bg-ink px-4 py-2.5 font-semibold text-white">Try again</button>} />
+  if (!workspaces) return <Splash text="Loading your workspace…" />
+  if (!workspaces.length) {
+    return <Splash text="Your account isn’t in any workspace yet. If you were just invited, sign out and in again; otherwise ask the workspace owner to invite this email."
+      action={<button type="button" onClick={() => void signOut()} className="mt-4 rounded-md bg-ink px-4 py-2.5 font-semibold text-white">Sign out</button>} />
   }
 
-  const section = SECTION_BY_ID[current]
-  const status = progress.sections.find(s => s.sectionId === current)!
+  const workspace = workspaces.find(w => w.id === workspaceId) ?? workspaces.find(w => w.role === 'owner') ?? workspaces[0]
+  const chooseWorkspace = (id: string) => { setWorkspaceId(id); writeWs(id); window.location.hash = '#/' }
 
-  const footer = (
-    <div className="space-y-3">
-      <div>
-        <label htmlFor="project-source" className="mb-1 block text-white/60">Working on</label>
-        <select id="project-source" className="w-full rounded-md border border-white/20 bg-white/10 px-2 py-1.5 text-white"
-          value={project.id === 'new' ? 'new' : 'sample'}
-          onChange={e => {
-            const next = e.target.value === 'new' ? { ...createProject('New GTM project', 'Hybrid'), id: 'new' } : sample()
-            if (confirm('Switch project? Changes to the current one are not saved yet.')) { dispatch({ type: 'replace', project: next }); navigate('brief') }
-          }}>
-          <option value="sample" className="text-ink">Pimp My Prompt test plan</option>
-          <option value="new" className="text-ink">New empty project</option>
-        </select>
-      </div>
-      <p className="m-0 text-white/55">
-        Changes stay in this tab until saving to Supabase is added.{' '}
-        {conn && <span className="block mt-1">Database: {conn.state === 'ready' ? 'connected' : conn.state === 'schema-missing' ? 'schema missing' : conn.state === 'not-configured' ? 'not configured' : 'unreachable'}</span>}
-      </p>
-    </div>
-  )
+  if (route.name === 'project') {
+    return <ProjectLoader key={route.id} services={services} projectId={route.id} section={route.section} user={user}
+      workspaces={workspaces} onSignOut={() => void signOut()} />
+  }
 
   return (
-    <div className="flex min-h-screen">
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-20 focus:rounded focus:bg-sheet focus:px-3 focus:py-2 focus:text-ink">Skip to content</a>
-      <Rail project={project} progress={progress} current={current} today={today} onNavigate={navigate} footer={footer} />
-      <div className="min-w-0 flex-1">
-        <MobileBar project={project} progress={progress} current={current} today={today} onNavigate={navigate} />
-        <main id="main" tabIndex={-1} className="px-4 py-6 outline-none sm:px-8 lg:px-12 lg:py-10">
-          <SectionView key={current} section={section} status={status} project={project} dispatch={dispatch} onNavigate={navigate}
-            onField={onField} onChannel={onChannel} onRecalculateRoadmap={() => { dispatch({ type: 'recalculateRoadmap' }); setNotice('All roadmap dates reset from the launch date.') }} today={today} />
-        </main>
+    <AppShell route={route} user={user} workspaces={workspaces} workspace={workspace} onWorkspace={chooseWorkspace}
+      onSignOut={() => void signOut()} demo={services.mode === 'memory'}>
+      {route.name === 'team'
+        ? <TeamPage key={workspace.id} services={services} workspace={workspace} user={user} onWorkspaceChanged={() => void loadWorkspaces()} />
+        : <ProjectsPage key={workspace.id} services={services} workspace={workspace} />}
+    </AppShell>
+  )
+}
+
+function Splash({ text, action }: { text: string; action?: React.ReactNode }) {
+  return (
+    <main className="grid min-h-screen place-items-center bg-paper p-6 text-center">
+      <div className="max-w-md">
+        <p className="condensed m-0 text-3xl font-extrabold tracking-tight text-ink">GTM Planner</p>
+        <p role="status" className="mt-3 text-ink-soft">{text}</p>
+        {action}
       </div>
-      <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-4">
-        {notice && <p className="pointer-events-auto m-0 max-w-xl rounded-lg bg-ink px-4 py-3 text-sm text-white shadow-lg">{notice}</p>}
-      </div>
-    </div>
+    </main>
   )
 }

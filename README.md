@@ -24,6 +24,8 @@ npm run build      # typecheck + production build
 | `src/config/sections.ts` | **All plan content as data**: 16 sections in 4 phases, fields, tables, checklists (permanent IDs, motion tags), gates, funnel templates |
 | `src/engine/` | Pure logic, no UI: project creation, funnel model, progress and gates, roadmap dates and dependency warnings, budget rollup, unified tasks, prototype import |
 | `src/engine/__tests__/` | Vitest suite; the Pimp My Prompt test plan is the fixture |
+| `src/pages/` | Sign-in, plans list, editor, team pages; `src/App.tsx` handles session, workspace and routing (`#/`, `#/team`, `#/p/<id>/<step>`) |
+| `src/services/` | Backend interface with a Supabase implementation and an in-memory one (tests, and demo mode when Supabase isn't configured) |
 | `src/lib/` | Supabase client, hand-written DB types, project data validation (zod), projects/workspaces data access with conflict-safe saves |
 | `supabase/migrations/` | Database schema, triggers and Row Level Security policies |
 | `supabase/tests/` | Runs the migration on in-memory Postgres (PGlite) and tests access rules per role |
@@ -54,5 +56,7 @@ Key rules:
 - [x] Step 3 — Supabase schema + RLS, data access layer (apply the migration once: see docs/SUPABASE_SETUP.md)
 - [x] Step 4 — section screens: fields, editable tables, checklists, funnel + budget calculators, readiness per step (in-memory until Step 7)
 - [x] Step 6 — cross-section wiring: channel picker (archive / restore), motion → funnel model, launch date → roadmap dates (hand-set dates kept), project name follows product
-- [ ] Step 7 — autosave · Step 8 — auth & collaboration · Step 9 — dashboard, Tasks, Go/No-Go views
+- [x] Step 7 — autosave: saves ~1 s after you stop typing, conflict-safe (load theirs / keep mine), retry on network errors, unload warning
+- [x] Step 8 — magic-link sign-in, plans list (create, example plan, import/download JSON, rename, archive, delete), team page (invite by email, roles, remove), read-only viewers. Run the second migration: see docs/SUPABASE_SETUP.md
+- [ ] Step 9 — dashboard, Tasks, Go/No-Go views
 - [ ] Step 10 — exports (JSON, CSV, DOCX one-pager) · Step 11 — AI assist · Step 12 — e2e tests + Vercel deploy

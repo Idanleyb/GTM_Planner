@@ -1,4 +1,5 @@
 import type { ChecklistItem, Motion } from '../config/types'
+import { useReadOnly } from './ReadOnly'
 
 interface Props {
   idPrefix: string
@@ -11,6 +12,7 @@ interface Props {
 
 export function Checklist({ idPrefix, items, hiddenCount, motion, checks, onToggle }: Props) {
   const done = items.filter(i => checks[i.id]).length
+  const readOnly = useReadOnly()
   return (
     <div>
       <p className="mb-2 text-sm text-ink-muted">
@@ -24,7 +26,7 @@ export function Checklist({ idPrefix, items, hiddenCount, motion, checks, onTogg
           return (
             <li key={item.id}>
               <label htmlFor={id} className="flex cursor-pointer gap-3 px-3 py-2.5 hover:bg-paper">
-                <input id={id} type="checkbox" checked={checked} onChange={e => onToggle(item.id, e.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-ready)]" />
+                <input id={id} type="checkbox" checked={checked} disabled={readOnly} onChange={e => onToggle(item.id, e.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-ready)]" />
                 <span>
                   <span className={`block ${checked ? 'text-ink-muted line-through decoration-ink-muted/50' : 'text-ink'}`}>{item.label}</span>
                   <span className="block text-sm text-ink-muted">{item.evidence}. Suggested owner: {item.owner}</span>

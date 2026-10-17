@@ -1,5 +1,6 @@
 import type { CellValue, Row, TableDef } from '../config/types'
 import { FieldInput } from './FieldInput'
+import { useReadOnly } from './ReadOnly'
 
 interface Props {
   def: TableDef
@@ -17,6 +18,7 @@ const widthFor = (type: string) =>
 
 export function EditableTable({ def, rows, idPrefix, highlightRowIds, onCell, onAdd, onDelete, onMove }: Props) {
   const titleKey = def.task?.titleKey ?? def.columns[0].key
+  const readOnly = useReadOnly()
   return (
     <div>
       <div className="overflow-x-auto rounded-lg border border-line bg-sheet">
@@ -26,12 +28,12 @@ export function EditableTable({ def, rows, idPrefix, highlightRowIds, onCell, on
               {def.columns.map(c => (
                 <th key={c.key} scope="col" className={`border-b border-line px-2 py-2 font-semibold text-ink ${widthFor(c.type)}`}>{c.label}</th>
               ))}
-              <th scope="col" className="border-b border-line px-2 py-2"><span className="sr-only">Row actions</span></th>
+              {!readOnly && <th scope="col" className="border-b border-line px-2 py-2"><span className="sr-only">Row actions</span></th>}
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 && (
-              <tr><td colSpan={def.columns.length + 1} className="px-3 py-6 text-ink-muted">No rows yet. Add the first one below.</td></tr>
+              <tr><td colSpan={def.columns.length + 1} className="px-3 py-6 text-ink-muted">{readOnly ? 'No rows yet.' : 'No rows yet. Add the first one below.'}</td></tr>
             )}
             {rows.map((r, i) => {
               const rowName = String(r[titleKey] || `row ${i + 1}`)
@@ -49,22 +51,22 @@ export function EditableTable({ def, rows, idPrefix, highlightRowIds, onCell, on
                       />
                     </td>
                   ))}
-                  <td className="border-b border-line px-1.5 py-1.5">
+                  {!readOnly && <td className="border-b border-line px-1.5 py-1.5">
                     <div className="flex gap-1">
                       <IconButton label={`Move ${rowName} up`} disabled={i === 0} onClick={() => onMove(r.id, -1)}>↑</IconButton>
                       <IconButton label={`Move ${rowName} down`} disabled={i === rows.length - 1} onClick={() => onMove(r.id, 1)}>↓</IconButton>
                       <IconButton label={`Delete ${rowName}`} danger onClick={() => { if (confirm(`Delete "${rowName}"?`)) onDelete(r.id) }}>×</IconButton>
                     </div>
-                  </td>
+                  </td>}
                 </tr>
               )
             })}
           </tbody>
         </table>
       </div>
-      <button type="button" onClick={onAdd} className="mt-2 rounded-md border border-line bg-sheet px-3 py-1.5 text-sm font-semibold text-ink hover:border-ink-muted">
+      {!readOnly && <button type="button" onClick={onAdd} className="mt-2 rounded-md border border-line bg-sheet px-3 py-1.5 text-sm font-semibold text-ink hover:border-ink-muted">
         Add row
-      </button>
+      </button>}
     </div>
   )
 }

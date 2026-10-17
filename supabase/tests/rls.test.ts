@@ -122,4 +122,17 @@ describe('Supabase schema + RLS', () => {
     expect(await q('select count(*)::int as n from projects where workspace_id = $1', [aliceWs])).toEqual([{ n: 0 }])
     expect(await q('select count(*)::int as n from workspace_members where workspace_id = $1', [aliceWs])).toEqual([{ n: 0 }])
   })
+
+  it('an existing user accepts invites on sign-in; anonymous callers cannot', async () => {
+    const DAN = '00000000-0000-0000-0000-00000000000d'
+    emails[DAN] = 'dan@example.com'
+    await signUp(DAN)
+    const carolWs = (await as(CAROL, () => q('select id from workspaces')))[0].id
+    await as(CAROL, () => q(`insert into workspace_invites (workspace_id, email, role) values ($1, 'dan@example.com', 'editor')`, [carolWs]))
+    expect(await as(DAN, () => q('select id from projects where workspace_id = $1', [carolWs]))).toEqual([])
+    expect(await as(DAN, () => q('select public.accept_pending_invites() as n'))).toEqual([{ n: 1 }])
+    expect(await as(DAN, () => q('select role from workspace_members where workspace_id = $1 and user_id = $2', [carolWs, DAN]))).toEqual([{ role: 'editor' }])
+    expect(await as(DAN, () => q('select public.accept_pending_invites() as n'))).toEqual([{ n: 0 }])
+    await expect(as(null, () => q('select public.accept_pending_invites()'))).rejects.toThrow(/permission denied/)
+  })
 })

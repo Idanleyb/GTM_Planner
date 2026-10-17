@@ -1,4 +1,5 @@
 import type { CellValue, ColumnDef, FieldDef } from '../config/types'
+import { useReadOnly } from './ReadOnly'
 
 const NUMERIC = new Set(['number', 'money', 'percent'])
 
@@ -15,7 +16,8 @@ interface Props {
 /** One control for every field type in the config. Numbers are stored as numbers, empty as ''. */
 export function FieldInput({ id, def, value, onChange, compact, ariaLabel, describedBy }: Props) {
   const v = value ?? ''
-  const common = { id, 'aria-label': ariaLabel, 'aria-describedby': describedBy, className: `field-control ${compact ? 'text-sm' : ''}` }
+  const readOnly = useReadOnly()
+  const common = { id, disabled: readOnly, 'aria-label': ariaLabel, 'aria-describedby': describedBy, className: `field-control disabled:cursor-default disabled:bg-paper disabled:text-ink ${compact ? 'text-sm' : ''}` }
 
   if (def.type === 'select') {
     const options = def.options ?? []

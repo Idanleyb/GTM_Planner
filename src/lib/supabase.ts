@@ -11,7 +11,7 @@ export const isSupabaseConfigured = Boolean(url && anonKey)
 
 /** Null when env vars are missing (e.g. tests, or a fresh clone without .env.local). */
 export const supabase: DbClient | null = isSupabaseConfigured
-  ? createClient<Database>(url!, anonKey!, { auth: { persistSession: true, autoRefreshToken: true } })
+  ? createClient<Database>(url!, anonKey!, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' } })
   : null
 
 export function requireSupabase(): DbClient {
