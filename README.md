@@ -60,5 +60,5 @@ Key rules:
 - [x] Step 7 — autosave: saves ~1 s after you stop typing, conflict-safe (load theirs / keep mine), retry on network errors, unload warning
 - [x] Step 8 — magic-link sign-in, plans list (create, example plan, import/download JSON, rename, archive, delete), team page (invite by email, roles, remove), read-only viewers. Run the second migration: see docs/SUPABASE_SETUP.md
 - [x] Step 9 (part) + Step 10 (part) — Plan summary page (`#/p/<id>/summary`): key facts, readiness by phase, what's missing, work due in 14 days, and every part of the plan; **Download Word doc** (navy/amber, A4, page numbers) from the summary, the rail and the plans list; print / save as PDF
-- [ ] Step 9 (rest) — unified Tasks view with filters, Go/No-Go page
-- [ ] Step 10 — exports (JSON, CSV, DOCX one-pager) · Step 11 — AI assist · Step 12 — e2e tests + Vercel deploy
+- [x] Step 9 — Tasks view (`#/p/<id>/tasks`): every channel, asset, calendar item, team deliverable, milestone and risk in one list; filter by open / overdue / due in 7 days / no owner / done, owner, step and search; edit owner, due date and status inline; CSV export. Readiness review on the Go / no-go step: verdict, steps before launch that aren't ready, open high-impact risks, overdue work
+- [x] Step 10 — exports: JSON (plans list, rail), task CSV (Tasks view), Word summary (summary page, rail, plans list) · Step 11 — AI assist · Step 12 — e2e tests + Vercel deploy

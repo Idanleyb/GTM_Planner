@@ -11,6 +11,7 @@ import { navigate } from '../router'
 import type { PlanView } from '../router'
 import { downloadSummaryDoc } from '../lib/downloadSummary'
 import { SummaryView } from '../components/SummaryView'
+import { TasksView } from '../components/TasksView'
 import type { Services, User, Workspace, WorkspaceRole } from '../services/types'
 import { friendlyError } from '../services/types'
 import { projectReducer } from '../state/projectReducer'
@@ -123,7 +124,7 @@ export function EditorPage({ services, initial, section: current, role, user, on
     if (archived) setNotice(`${channel} archived with its details. Tick it again to restore.`)
   }
 
-  const section = current === 'summary' ? null : SECTION_BY_ID[current]
+  const section = current === 'summary' || current === 'tasks' ? null : SECTION_BY_ID[current]
   const status = section ? progress.sections.find(s => s.sectionId === section.id)! : null
   const saveStatus = <SaveStatus autosave={autosave} mode={services.mode} />
 
@@ -154,7 +155,9 @@ export function EditorPage({ services, initial, section: current, role, user, on
               <SectionView key={current} section={section} status={status} project={project} dispatch={dispatch} onNavigate={go}
                 onField={onField} onChannel={onChannel}
                 onRecalculateRoadmap={() => { dispatch({ type: 'recalculateRoadmap' }); setNotice('All roadmap dates reset from the launch date.') }} today={today} />
-            ) : <SummaryView project={project} today={today} onNavigate={go} />}
+            ) : current === 'tasks'
+              ? <TasksView project={project} dispatch={dispatch} today={today} onNavigate={go} />
+              : <SummaryView project={project} today={today} onNavigate={go} />}
           </main>
         </div>
         <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-4 print:hidden">

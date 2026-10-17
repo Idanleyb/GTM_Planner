@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { SECTION_BY_ID } from './config/sections'
 import type { SectionId } from './config/types'
 
-/** A plan step, or the plan summary page. */
-export type PlanView = SectionId | 'summary'
+/** A plan step, or one of the whole-plan views. */
+export type PlanView = SectionId | 'summary' | 'tasks'
 
 export type Route =
   | { name: 'projects' }
@@ -14,7 +14,7 @@ export function parseHash(hash: string): Route {
   const parts = hash.replace(/^#\/?/, '').split('/').filter(Boolean)
   if (parts[0] === 'team') return { name: 'team' }
   if (parts[0] === 'p' && parts[1]) {
-    const section: PlanView = parts[2] === 'summary' ? 'summary' : SECTION_BY_ID[parts[2] as SectionId] ? (parts[2] as SectionId) : 'brief'
+    const section: PlanView = parts[2] === 'summary' || parts[2] === 'tasks' ? parts[2] : SECTION_BY_ID[parts[2] as SectionId] ? (parts[2] as SectionId) : 'brief'
     return { name: 'project', id: decodeURIComponent(parts[1]), section }
   }
   return { name: 'projects' }

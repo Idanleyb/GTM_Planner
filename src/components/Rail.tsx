@@ -39,10 +39,14 @@ export function Rail({ project, progress, current, today, onNavigate, footer }: 
             <div className="h-full rounded-full bg-signal" style={{ width: `${progress.overall.pct}%` }} />
           </div>
         </div>
-        <button type="button" onClick={() => onNavigate('summary')} aria-current={current === 'summary' ? 'page' : undefined}
-          className={`mt-4 flex w-full items-center justify-between rounded-md border px-3 py-2 text-left text-sm ${current === 'summary' ? 'border-signal bg-white/10 font-semibold text-white' : 'border-white/20 text-white hover:border-white/40'}`}>
-          <span>Plan summary</span><span className="text-white/60">Word download</span>
-        </button>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {([['summary', 'Plan summary'], ['tasks', 'Tasks']] as const).map(([id, label]) => (
+            <button key={id} type="button" onClick={() => onNavigate(id)} aria-current={current === id ? 'page' : undefined}
+              className={`rounded-md border px-3 py-2 text-left text-sm ${current === id ? 'border-signal bg-white/10 font-semibold text-white' : 'border-white/20 text-white hover:border-white/40'}`}>
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <nav aria-label="Plan steps" className="flex-1 px-3 py-4">
@@ -89,6 +93,7 @@ export function MobileBar({ project, progress, current, today, onNavigate, statu
       <select id="mobile-step" value={current} onChange={e => onNavigate(e.target.value as PlanView)}
         className="mt-2 w-full rounded-md border border-white/20 bg-white/10 px-3 py-2 text-white">
         <option value="summary" className="text-ink">Plan summary</option>
+        <option value="tasks" className="text-ink">Tasks</option>
         {PHASES.map(ph => (
           <optgroup key={ph.id} label={ph.title} className="text-ink">
             {SECTIONS.filter(s => s.phase === ph.id).map(s => {

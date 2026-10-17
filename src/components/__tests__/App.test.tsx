@@ -224,3 +224,39 @@ describe('plan summary and Word download', () => {
   })
 })
 
+describe('tasks view and readiness review', () => {
+  it('lists open tasks across steps, filters them and edits inline', async () => {
+    await openSample('tasks')
+    const user = userEvent.setup()
+    expect(screen.getByRole('heading', { level: 1, name: 'Tasks' })).toBeTruthy()
+    expect(screen.getByText('51 tasks', { selector: 'caption' })).toBeTruthy()
+    await user.selectOptions(screen.getByLabelText('Owner'), 'Yoav (Dev)')
+    const caption = () => screen.getByText(/\d+ tasks?$/, { selector: 'caption' }).textContent
+    expect(caption()).not.toBe('51 tasks')
+    await user.type(screen.getByLabelText('Search'), 'paywall')
+    expect(caption()).toBe('1 task')
+    const status = screen.getByLabelText('Status, Paywall, Pro plan, share card shipped') as HTMLSelectElement
+    await user.selectOptions(status, 'Complete')
+    expect(screen.getByText('Nothing matches these filters.')).toBeTruthy() // done tasks leave the Open list
+    await user.click(screen.getByRole('radio', { name: /^Done/ }))
+    expect((screen.getByLabelText('Status, Paywall, Pro plan, share card shipped') as HTMLSelectElement).value).toBe('Complete')
+    await user.click(screen.getByRole('button', { name: 'Reset filters' }))
+    expect(caption()).toBe('50 tasks')
+  })
+
+  it('opens the task’s step from the list', async () => {
+    await openSample('tasks')
+    await userEvent.setup().click(screen.getAllByRole('button', { name: 'Risk register' })[0])
+    expect(await screen.findByRole('heading', { level: 1, name: 'Risk register' })).toBeTruthy()
+  })
+
+  it('shows what blocks a go decision on the Go / no-go step', async () => {
+    await openSample('launch')
+    const panel = screen.getByRole('region', { name: 'Readiness review' })
+    expect(within(panel).getByText('Not ready for a go decision yet: 2 steps not ready.')).toBeTruthy()
+    expect(within(panel).getByText('Launch delay')).toBeTruthy()
+    await userEvent.setup().click(within(panel).getByRole('button', { name: '04 Pricing & packaging' }))
+    expect(await screen.findByRole('heading', { level: 1, name: 'Pricing & packaging' })).toBeTruthy()
+  })
+})
+

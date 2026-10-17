@@ -8,6 +8,9 @@ import { getRef, motionOf } from '../engine/project'
 import { roadmapWarnings } from '../engine/roadmap'
 import { archivedChannels, manualRoadmapDates, selectedChannels } from '../engine/wiring'
 import { ChannelPicker } from './ChannelPicker'
+import { LaunchReviewPanel } from './LaunchReviewPanel'
+import { launchReview } from '../engine/launchReview'
+import type { PlanView } from '../router'
 import type { ProjectAction } from '../state/projectReducer'
 import { Checklist } from './Checklist'
 import { EditableTable } from './EditableTable'
@@ -21,7 +24,7 @@ interface Props {
   status: SectionStatus
   project: Project
   dispatch: Dispatch<ProjectAction>
-  onNavigate: (id: SectionId) => void
+  onNavigate: (id: PlanView) => void
   /** Field edits go through the app so cross-section rules (motion, launch date, funnel model) apply. */
   onField: (section: SectionId, key: string, value: CellValue) => void
   onChannel: (channel: string, on: boolean) => void
@@ -49,6 +52,8 @@ export function SectionView({ section, status, project, dispatch, onNavigate, on
         <p className="mb-0 mt-2 max-w-[68ch] text-ink-soft">{section.intro}</p>
         <GateLine status={status} />
       </header>
+
+      {section.id === 'launch' && <LaunchReviewPanel review={launchReview(data, today)} onNavigate={onNavigate} />}
 
       {section.readOnlyRefs && (
         <section aria-label="From the GTM brief" className="mb-6 rounded-lg border border-line bg-sheet p-4">
