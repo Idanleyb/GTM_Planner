@@ -33,6 +33,30 @@ const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors, 'Content-Type': 'application/json' } })
 const fail = (status: number, code: string, error: string, extra: Record<string, unknown> = {}) => json({ error, code, ...extra }, status)
 
+/** Tolerate keys pasted with spaces, line breaks, quotes or angle brackets around them. */
+export function cleanApiKey(raw: string | undefined): string {
+  return (raw ?? '').trim().replace(/^["'<\s]+|["'>\s]+$/g, '').trim()
+}
+
+/** For function logs only: enough to recognise which key is set, never the key itself. */
+export function keyFingerprint(key: string): string {
+  return key ? `${key.slice(0, 7)}…${key.slice(-4)} (${key.length} chars)` : '(empty)'
+}
+
+/** Turn an Anthropic API error into a message the user can act on. Anthropic's messages contain no secrets. */
+export function upstreamMessage(status: number, detail: string): string {
+  let type = '', message = ''
+  try { const e = JSON.parse(detail)?.error; type = String(e?.type ?? ''); message = String(e?.message ?? '') } catch { /* not JSON */ }
+  const said = message ? ` Anthropic says: “${message.slice(0, 200)}”` : ''
+  if (/credit balance|billing|purchase credits/i.test(message)) return `Your Anthropic account has no credit left. Add credit at console.anthropic.com → Billing.${said}`
+  if (status === 401 || type === 'authentication_error') return `The Anthropic API key was rejected. Create a new key at console.anthropic.com → API Keys and set it again.${said}`
+  if (status === 403 || type === 'permission_error') return `This Anthropic API key isn’t allowed to use the model. Check the key’s workspace and model access, or set AI_MODEL.${said}`
+  if (status === 404 || type === 'not_found_error') return `The model wasn’t found. Check the AI_MODEL secret.${said}`
+  if (status === 429 || status === 529 || type === 'rate_limit_error' || type === 'overloaded_error') return 'Claude is busy right now. Try again in a minute.'
+  if (status === 400) return `Claude couldn’t process this request.${said}`
+  return 'The AI request failed. Try again.'
+}
+
 export function createHandler(deps: Deps): (req: Request) => Promise<Response> {
   const env = deps.env
   const log = deps.log ?? console.error
@@ -43,7 +67,7 @@ export function createHandler(deps: Deps): (req: Request) => Promise<Response> {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
     if (req.method !== 'POST') return fail(405, 'method', 'Use POST.')
 
-    const apiKey = env('ANTHROPIC_API_KEY')
+    const apiKey = cleanApiKey(env('ANTHROPIC_API_KEY'))
     if (!apiKey) return fail(503, 'not_configured', 'AI assist isn’t set up yet: the ANTHROPIC_API_KEY secret is missing.')
 
     const url = env('SUPABASE_URL')!
@@ -101,10 +125,8 @@ export function createHandler(deps: Deps): (req: Request) => Promise<Response> {
     }
     if (!response.ok) {
       const detail = await response.text()
-      log('anthropic error', response.status, detail.slice(0, 500))
-      const busy = response.status === 429 || response.status === 529
-      const auth = response.status === 401 || response.status === 403
-      return fail(502, 'upstream', busy ? 'Claude is busy right now. Try again in a minute.' : auth ? 'The Anthropic API key was rejected. Check the ANTHROPIC_API_KEY secret.' : 'The AI request failed. Try again.')
+      log('anthropic error', response.status, 'model', MODEL, 'key', keyFingerprint(apiKey), detail.slice(0, 500))
+      return fail(502, 'upstream', upstreamMessage(response.status, detail), { upstreamStatus: response.status })
     }
     const message = await response.json()
     const toolUse = (message.content ?? []).find((c: { type: string }) => c.type === 'tool_use')

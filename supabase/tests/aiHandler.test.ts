@@ -4,7 +4,7 @@ import fixture from '../../src/test/fixtures/prototype-pimp-my-prompt.json'
 import { SECTION_BY_ID } from '../../src/config/sections'
 import { migratePrototype } from '../../src/engine'
 import { buildAiRequest } from '../../src/ai/describe'
-import { createHandler } from '../functions/ai-assist/handler'
+import { cleanApiKey, createHandler, keyFingerprint, upstreamMessage } from '../functions/ai-assist/handler'
 
 const project = migratePrototype(fixture).project
 const pricingReq = (action: 'draft' | 'critique' | 'fill' = 'draft') => buildAiRequest(action, SECTION_BY_ID.pricing, project, new Date('2026-10-17T12:00:00'))
@@ -87,16 +87,34 @@ describe('ai-assist handler', () => {
     expect((await res.json()).result.findings).toHaveLength(1)
   })
 
-  it('explains upstream failures without leaking details and does not count them', async () => {
-    for (const [status, msg] of [[529, /busy/], [401, /API key was rejected/], [500, /request failed/]] as const) {
-      const { call, w } = setup({}, { status, claude: { error: { message: 'secret detail' } } })
+  it('explains upstream failures in plain words and does not count them', async () => {
+    const cases: [number, unknown, RegExp][] = [
+      [529, { type: 'error', error: { type: 'overloaded_error', message: 'Overloaded' } }, /busy/],
+      [401, { type: 'error', error: { type: 'authentication_error', message: 'invalid x-api-key' } }, /key was rejected.*“invalid x-api-key”/],
+      [400, { type: 'error', error: { type: 'invalid_request_error', message: 'Your credit balance is too low to access the Anthropic API.' } }, /no credit left/],
+      [404, { type: 'error', error: { type: 'not_found_error', message: 'model: claude-x' } }, /AI_MODEL/],
+      [500, 'not json', /request failed/],
+    ]
+    for (const [status, claude, msg] of cases) {
+      const { call, w } = setup({}, { status, claude })
       const res = await call()
       const body = await res.json()
       expect(res.status).toBe(502)
       expect(body.error).toMatch(msg)
-      expect(JSON.stringify(body)).not.toMatch(/secret detail/)
+      expect(body.upstreamStatus).toBe(status)
+      expect(JSON.stringify(body)).not.toMatch(/sk-test/)
       expect(w.inserts).toEqual([])
     }
+  })
+
+  it('cleans pasted keys and never exposes them', async () => {
+    expect(cleanApiKey('  "sk-ant-abc123"\r\n')).toBe('sk-ant-abc123')
+    expect(cleanApiKey('<sk-ant-abc123>')).toBe('sk-ant-abc123')
+    expect(keyFingerprint('sk-ant-api03-abcdefghij1234')).toBe('sk-ant-…1234 (27 chars)')
+    expect(upstreamMessage(401, '')).toMatch(/rejected/)
+    const { call, fetchMock } = setup({}, { env: { ANTHROPIC_API_KEY: ' "sk-test" ' } })
+    await call()
+    expect((fetchMock.mock.calls[0][1]!.headers as Record<string, string>)['x-api-key']).toBe('sk-test')
   })
 
   it('rejects malformed and oversized requests and answers CORS preflight', async () => {

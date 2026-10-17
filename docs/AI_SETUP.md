@@ -59,7 +59,9 @@ A request sends the step plus a summary of the plan: roughly 4,000–7,000 input
 |---|---|
 | AI assist isn’t deployed yet | Run step 3 |
 | AI assist isn’t set up yet: the ANTHROPIC_API_KEY secret is missing | `npx supabase secrets set ANTHROPIC_API_KEY=...` |
-| The Anthropic API key was rejected | Create a new key and set it again |
+| The Anthropic API key was rejected … “invalid x-api-key” | The key is wrong or disabled. Create a new key, run `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...` (no quotes or brackets), then try again. Function logs show the first and last characters of the key in use, so you can confirm which one is set. |
+| Your Anthropic account has no credit left | console.anthropic.com → **Billing** → add credit. API usage is billed separately from a Claude.ai subscription. |
+| This Anthropic API key isn’t allowed to use the model | The key's workspace can't use that model. Use a key from your default workspace, or set `AI_MODEL=claude-haiku-5-5` |
 | Couldn’t check your AI usage | Run the step 1 migration |
 | You’ve used all 30 AI requests… | Wait, or raise `AI_DAILY_LIMIT` |
 
