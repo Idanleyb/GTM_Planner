@@ -2,14 +2,17 @@
 
 A step-by-step planner that guides marketers through building and running a go-to-market plan: strategy, plan, readiness, and post-launch learning.
 
-Stack: Vite + React + TypeScript, Tailwind, Vitest. Supabase (data + auth) and Vercel (hosting) come next.
+Stack: Vite + React + TypeScript, Tailwind, Vitest, Supabase (Postgres + auth, RLS). Vercel hosting comes in Step 12.
+
+First-time Supabase setup: see [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md).
 
 ## Run it
 
 ```bash
 npm install
+cp .env.example .env.local   # add Supabase URL + anon key
 npm run dev        # engine preview at http://localhost:5173
-npm test           # unit tests
+npm test           # unit tests + database access-rule tests
 npm run build      # typecheck + production build
 ```
 
@@ -21,6 +24,9 @@ npm run build      # typecheck + production build
 | `src/config/sections.ts` | **All plan content as data**: 16 sections in 4 phases, fields, tables, checklists (permanent IDs, motion tags), gates, funnel templates |
 | `src/engine/` | Pure logic, no UI: project creation, funnel model, progress and gates, roadmap dates and dependency warnings, budget rollup, unified tasks, prototype import |
 | `src/engine/__tests__/` | Vitest suite; the Pimp My Prompt test plan is the fixture |
+| `src/lib/` | Supabase client, hand-written DB types, project data validation (zod), projects/workspaces data access with conflict-safe saves |
+| `supabase/migrations/` | Database schema, triggers and Row Level Security policies |
+| `supabase/tests/` | Runs the migration on in-memory Postgres (PGlite) and tests access rules per role |
 | `src/test/fixtures/` | Prototype JSON export used as test data |
 | `docs/prototype.html` | The original single-file prototype (reference) |
 
@@ -45,7 +51,7 @@ Key rules:
 - [x] Step 1 — content as typed config
 - [x] Step 2 — project scaffold
 - [x] Step 5 — tested engine + prototype JSON import
-- [ ] Step 3 — Supabase schema + RLS
+- [x] Step 3 — Supabase schema + RLS, data access layer (apply the migration once: see docs/SUPABASE_SETUP.md)
 - [ ] Step 4 — section renderers (fields, editable tables, checklists, calculators)
 - [ ] Step 6 — cross-section wiring (channel selection, motion switch, date recalculation)
 - [ ] Step 7 — autosave · Step 8 — auth & collaboration · Step 9 — dashboard, Tasks, Go/No-Go views

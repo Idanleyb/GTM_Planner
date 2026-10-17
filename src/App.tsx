@@ -1,10 +1,13 @@
 // Temporary engine preview (Steps 1, 2 and 5). The real section UI comes in Step 4.
 // Shows the config-driven phases/sections with gate status, computed from the
 // Pimp My Prompt test plan migrated from the prototype.
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import fixture from './test/fixtures/prototype-pimp-my-prompt.json'
 import { PHASES } from './config/types'
 import { SECTIONS } from './config/sections'
+import { supabase } from './lib/supabase'
+import { checkConnection } from './lib/connectionCheck'
+import type { ConnectionState } from './lib/connectionCheck'
 import { budgetSummary, computeFunnel, createProjectData, funnelInputsFrom, migratePrototype, projectProgress } from './engine'
 
 const STATE_STYLE = {
@@ -16,6 +19,8 @@ const STATE_LABEL = { ready: 'Ready', in_progress: 'In progress', not_started: '
 
 export default function App() {
   const [source, setSource] = useState<'fixture' | 'empty'>('fixture')
+  const [conn, setConn] = useState<ConnectionState | null>(null)
+  useEffect(() => { checkConnection(supabase).then(setConn) }, [])
   const { data, warnings } = useMemo(() => {
     if (source === 'empty') return { data: createProjectData('Hybrid'), warnings: [] as string[] }
     const m = migratePrototype(fixture)
@@ -38,6 +43,10 @@ export default function App() {
           <option value="empty">Empty project</option>
         </select>
       </header>
+
+      <p className={`mb-4 rounded-lg border px-3 py-2 text-sm ${conn?.state === 'ready' ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-slate-50 text-slate-600'}`}>
+        <b>Supabase:</b> {conn === null ? 'checking…' : conn.state === 'not-configured' ? 'not configured (add .env.local)' : conn.detail}
+      </p>
 
       <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat label="Completion" value={`${progress.overall.pct}%`} />
