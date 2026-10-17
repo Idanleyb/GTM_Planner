@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GTM Launch Planner</title>
+<style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#172033;--muted:#647087;--line:#dfe5ef;--accent:#315efb;--accent-soft:#edf1ff;--good:#18794e;--warn:#9a6700;--shadow:0 8px 28px rgba(25,39,72,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:1440px;margin:auto;padding:24px}.topbar{display:flex;gap:16px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:20px}.brand h1{margin:0;font-size:27px;letter-spacing:-.6px}.brand p{margin:4px 0 0;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:white;color:var(--text);border-radius:10px;padding:9px 13px;font-weight:650}.btn.primary{background:var(--accent);border-color:var(--accent);color:white}.btn.danger{color:#b42318}.layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:20px;align-items:start}.sidebar{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;position:sticky;top:16px;box-shadow:var(--shadow)}.project-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:800;padding:8px 10px}.nav button{width:100%;display:flex;justify-content:space-between;gap:10px;text-align:left;border:0;background:transparent;border-radius:9px;padding:10px;color:#46516a;margin:1px 0}.nav button.active{background:var(--accent-soft);color:var(--accent);font-weight:750}.nav .count{font-size:11px;color:var(--muted)}.progress-card{margin:14px 4px 4px;padding:12px;background:#f8f9fc;border-radius:12px}.progress-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}.track{height:7px;background:#e3e8f2;border-radius:20px;overflow:hidden}.fill{height:100%;background:var(--accent);width:0;transition:width .2s}.content{min-width:0}.hero{background:linear-gradient(120deg,#1e2b58,#315efb);color:white;border-radius:18px;padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}.hero .eyebrow{opacity:.78;font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800}.hero h2{margin:5px 0 8px;font-size:25px}.hero p{margin:0;max-width:750px;color:#e0e7ff}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:24px;margin-top:3px}.section{display:none;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}.section.active{display:block}.section-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}.section h2{margin:0;font-size:22px;letter-spacing:-.3px}.section .intro{margin:5px 0 0;color:var(--muted)}.pill{background:#f0f3fa;border-radius:999px;padding:5px 9px;font-size:12px;color:#59657a;white-space:nowrap}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:750;color:#4c5870}.field input,.field select,.field textarea{width:100%;border:1px solid #cfd7e5;background:white;border-radius:9px;padding:10px 11px;color:var(--text);outline:none}.field textarea{min-height:88px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px #315efb18}.subhead{font-size:15px;font-weight:800;margin:22px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;margin:12px 0}.data-table{border-collapse:collapse;width:100%;min-width:720px}.data-table th,.data-table td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}.data-table th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#f8f9fc}.data-table tr:last-child td{border-bottom:0}.data-table input,.data-table select,.data-table textarea{width:100%;min-width:95px;border:1px solid #d8deea;border-radius:7px;padding:7px;background:white}.data-table textarea{min-width:140px;min-height:45px}.checklist{display:grid;gap:8px}.checkrow{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:10px;padding:11px 12px}.checkrow input{margin-top:4px;accent-color:var(--accent)}.checkrow span{flex:1}.checkrow small{display:block;color:var(--muted);margin-top:2px}.checkrow.done span{text-decoration:line-through;color:var(--muted)}.phase-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.phase{border:1px solid var(--line);border-radius:12px;padding:14px}.phase h3{margin:0 0 4px;font-size:15px}.phase p{margin:0;color:var(--muted);font-size:13px}.phase b{display:block;margin-top:8px;font-size:12px;color:var(--accent)}.kpi-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.result{background:#f5f7ff;border-radius:10px;padding:12px}.result span{display:block;color:var(--muted);font-size:12px}.result strong{font-size:20px}.notice{border-left:3px solid var(--accent);padding:10px 13px;background:#f5f7ff;border-radius:0 8px 8px 0;color:#4c5870;margin:14px 0;font-size:13px}.section-footer{display:flex;justify-content:space-between;gap:10px;margin-top:24px;padding-top:16px;border-top:1px solid var(--line)}.empty{color:var(--muted);font-size:13px}.footer-note{color:var(--muted);font-size:12px;margin:18px 0 0}.toast{position:fixed;right:20px;bottom:20px;background:#172033;color:white;padding:12px 16px;border-radius:10px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static}.nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.phase-grid{grid-template-columns:1fr}}
+@media(max-width:580px){.app{padding:12px}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.section{padding:15px}.hero{padding:18px}.hero h2{font-size:21px}.stats{gap:8px}.stat{padding:11px}.stat strong{font-size:20px}.nav{grid-template-columns:1fr 1fr}.section-head{display:block}.section-head .pill{display:inline-block;margin-top:10px}.kpi-results{grid-template-columns:1fr}}
+@media print{body{background:white}.app{max-width:none;padding:0}.topbar .actions,.sidebar,.stats,.section-footer,.toast{display:none!important}.layout{display:block}.hero{background:white;color:#172033;box-shadow:none;padding:0}.hero p{color:#46516a}.section{display:block!important;box-shadow:none;border:0;padding:14px 0;break-inside:avoid}.section:not(.active){page-break-before:always}.section h2{font-size:19px}.table-wrap{overflow:visible}.data-table{min-width:0;font-size:10px}.data-table input,.data-table select,.data-table textarea{border:0;padding:2px;min-width:0}.checkrow{break-inside:avoid}.field input,.field textarea,.field select{border:0;border-bottom:1px solid #bbb;border-radius:0;padding:4px 0}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <h1>GTM Launch Planner</h1>
+      <p>One reusable workspace for every go-to-market launch.</p>
+    </div>
+    <div class="actions">
+      <button class="btn" id="newProject">＋ New GTM</button>
+      <button class="btn" id="exportJson">Export JSON</button>
+      <button class="btn" id="importBtn">Import JSON</button>
+      <button class="btn" id="exportCsv">Export task CSV</button>
+      <button class="btn" id="printBtn">Print / PDF</button>
+      <input id="importFile" type="file" accept=".json,application/json" hidden>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="project-label">Current workspace</div>
+      <div class="field" style="padding:0 8px 10px">
+        <label for="projectSelect">GTM project</label>
+        <select id="projectSelect"></select>
+        <div style="display:flex;gap:6px;margin-top:6px"><button class="btn" id="renameProject" style="flex:1;padding:6px 8px;font-size:12px">Rename</button><button class="btn danger" id="deleteProject" style="flex:1;padding:6px 8px;font-size:12px">Delete</button></div>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="progress-card">
+        <div class="progress-top"><span>Overall completion</span><strong id="progressText">0%</strong></div>
+        <div class="track"><div class="fill" id="progressFill"></div></div>
+        <p class="empty" id="progressDetail" style="margin:8px 0 0">Complete tasks as you go.</p>
+      </div>
+    </aside>
+    <main class="content">
+      <div class="hero">
+        <div class="eyebrow">Strategy → Execution → Learning</div>
+        <h2 id="heroTitle">Build your next launch plan</h2>
+        <p>Define the opportunity, align teams, assign owners, launch with confidence, and use real performance data to decide what to do next.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><span>Launch date</span><strong id="statDate">—</strong></div>
+        <div class="stat"><span id="statDaysLabel">Days to launch</span><strong id="statDays">—</strong></div>
+        <div class="stat"><span>Open tasks</span><strong id="statTasks">0</strong></div>
+        <div class="stat"><span>Budget</span><strong id="statBudget">—</strong></div>
+      </div>
+      <div id="sections"></div>
+      <p class="footer-note">Prototype note: this single-file app saves data in this browser using localStorage. Export JSON regularly for backups or to move a project to another device. A shared online version with accounts, database storage, and collaboration would need a backend.</p>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const navItems = [
+ ["brief","01","GTM brief"],["research","02","Research & validation"],["positioning","03","ICP & positioning"],["channels","04","Channel strategy"],["funnel","05","Funnel & KPIs"],["assets","06","Assets & content"],["budget","07","Budget & resources"],["tracking","08","Analytics & tracking"],["teams","09","Team alignment"],["roadmap","10","Execution roadmap"],["launch","11","Launch readiness"],["optimize","12","Post-launch optimization"],["risks","13","Risk register"],["meetings","14","Weekly operating meeting"],["handover","15","Final handover"]
+];
+const defaultChecklist = {
+ research:[
+  ["Define market size and opportunity","TAM, SAM, SOM; market trends","Marketing / Strategy"],
+  ["Define ICP (Ideal Customer Profile)","Firmographics, needs, buying triggers","Marketing / Sales"],
+  ["Map buyer personas and decision-makers","Pain points, motivations, objections","Marketing / Sales"],
+  ["Interview customers and prospects","Interview notes and recurring themes","Product Marketing"],
+  ["Analyze competitors and alternatives","Positioning and competitive matrix","Marketing"],
+  ["Audit existing performance and customer data","Baseline funnel, CAC, conversion, retention","Growth / Analytics"],
+  ["Validate demand and willingness to pay","Evidence of demand and pricing assumptions","Product / Sales"]
+ ],
+ tracking:[
+  ["Define funnel stages and shared qualification criteria","MQL / SQL / opportunity definitions","Marketing / Sales"],
+  ["Implement analytics and conversion events","Event map and tested conversions","Analytics"],
+  ["Configure campaign naming and UTM parameters","Naming convention and UTM guide","Growth"],
+  ["Connect ad platforms, CRM, website, and product analytics","Verified data flow","RevOps"],
+  ["Test lead capture, validation, routing, and attribution","End-to-end QA","RevOps"],
+  ["Build dashboard for spend, funnel, pipeline, and revenue","Dashboard and access","Analytics"],
+  ["Configure lead scoring and nurture flows where relevant","Scoring and automation rules","Lifecycle Marketing"],
+  ["Confirm consent, privacy, and data-retention requirements","Required approvals","Legal / Compliance"],
+  ["Test the full customer journey on mobile and desktop","QA results and fixes","Product / Marketing"],
+  ["Assign dashboard owner and reporting frequency","Named owner and cadence","GTM Lead"]
+ ],
+ launch:[
+  ["Product / offer is ready and accessible","Product and customer experience","Product"],
+  ["Pricing, terms, and availability are correct","Commercial details verified","Product / Finance"],
+  ["Support and escalation processes are staffed","Support workflow confirmed","Customer Success"],
+  ["Landing pages and core assets are live","Pages and assets QA approved","Marketing"],
+  ["Campaigns, budgets, targeting, and links are verified","Campaign QA complete","Growth"],
+  ["Email, social, PR, and partner schedules are confirmed","Distribution schedule locked","Marketing"],
+  ["Conversion tracking and dashboards work","Test conversions visible","Analytics"],
+  ["Lead routing and sales follow-up are tested","SLA and CRM routing confirmed","Sales / RevOps"],
+  ["Owners, escalation contacts, and reporting cadence are confirmed","Launch room and contacts ready","GTM Lead"],
+  ["Required legal and compliance approvals are complete","Formal approvals received","Legal / Compliance"],
+  ["Known risks have owners and mitigations","Risk register reviewed","GTM Lead"],
+  ["Decision-maker has approved launch","Formal go/no-go decision","Executive sponsor"]
+ ],
+ handover:[
+  ["Approved GTM brief and business objectives","Signed-off launch brief","GTM Lead"],
+  ["Market research, ICP, personas, and positioning","Research and messaging pack","Marketing"],
+  ["Channel strategy and campaign hypotheses","Channel plan","Growth"],
+  ["Funnel model, KPI definitions, and forecasts","KPI scorecard and forecast","Growth / Analytics"],
+  ["Campaign and content calendar","Dated calendar","Content / Marketing"],
+  ["Asset production tracker","Asset tracker with owners","Marketing"],
+  ["Budget and resource allocation","Approved budget","GTM Lead / Finance"],
+  ["Analytics, tracking, and dashboard specification","Measurement plan","Analytics"],
+  ["Sales / customer success enablement and handoff process","Playbooks and SLA","Sales / CS"],
+  ["Master roadmap with milestones, dependencies, and owners","Execution roadmap","GTM Lead"],
+  ["Launch-day go/no-go checklist","Completed readiness review","GTM Lead"],
+  ["Post-launch optimization and experiment plan","30/60/90-day review plan","Growth"],
+  ["Risk register and contingency plan","Risk mitigations assigned","GTM Lead"],
+  ["Weekly reporting and decision-making cadence","Recurring review scheduled","GTM Lead"]
+ ]
+};
+// Stable checklist IDs: derived from the item label, so reordering or inserting items never shifts saved checks.
+const slug = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const checkId = (group,item) => group+":"+slug(item[0]);
+const DONE_STATUSES = ["Complete","Approved","Live","Resolved"];
+const isDone = status => DONE_STATUSES.includes(status);
+function parseAmount(v){ // Bug 5: accepts 50000, "50,000", "50k", "1.2m"
+ if(v===""||v==null)return "";
+ if(typeof v==="number")return v;
+ const m=String(v).trim().toLowerCase().replace(/[, ]/g,"").match(/^([0-9]*\.?[0-9]+)([km]?)$/);
+ if(!m)return "";
+ return Math.round(parseFloat(m[1])*(m[2]==="k"?1e3:m[2]==="m"?1e6:1));
+}
+function migrateChecks(group,checks){ // converts old index-keyed checks ({0:true}) to ID-keyed
+ const items=defaultChecklist[group]||[];const out={};
+ for(const [k,v] of Object.entries(checks||{})){
+  if(/^\d+$/.test(k)){const it=items[+k];if(it)out[checkId(group,it)]=v}else out[k]=v;
+ }
+ return out;
+}
+const defaultProject = () => ({
+ id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),
+ name:"New GTM project", data:{
+ brief:{product:"",type:"New product",objective:"",launchDate:"",market:"",audience:"",valueProp:"",motion:"Hybrid",budget:"",target:"",owner:"",sponsor:"",currency:"USD"},
+ research:{notes:"",recommendation:"",checks:{}},
+ positioning:{icp:"",secondary:"",buyer:"",pain:"",alternative:"",value:"",differentiation:"",proof:"",message:"",cta:"",objections:""},
+ channels:{motion:"Hybrid",selected:["Paid search","Paid social","Content marketing"],rows:[]},
+ funnel:{customers:10,winRate:20,leadRate:10,cpl:100,revenue:12000,margin:70,notes:""},
+ assets:{rows:[],calendar:[]},
+ budget:{rows:[]},
+ tracking:{checks:{},notes:""},
+ teams:{rows:[]},
+ roadmap:{rows:[]},
+ launch:{checks:{},decision:"Pending",decisionOwner:"",decisionDate:"",notes:""},
+ optimize:{rows:[],notes:""},
+ risks:{rows:[]},
+ meetings:{cadence:"Weekly",attendees:"",agenda:"Scorecard; channel performance; execution blockers; experiments; decisions",notes:""},
+ handover:{checks:{},notes:""}
+ }});
+const taskDefaults = {
+ channels:[["Paid search","Conversion","Marketing"],["Paid social","Awareness / acquisition","Marketing"],["SEO / AEO","Discovery","Content / SEO"],["Content marketing","Education / consideration","Content"],["Email / lifecycle","Nurture / retention","Lifecycle"],["Organic social","Awareness / trust","Social"],["Influencers / KOLs","Trust / reach","Partnerships"],["PR / media","Awareness / credibility","PR"],["Outbound sales","Pipeline","Sales"],["Partnerships / affiliates","Distribution","Partnerships"],["Events / webinars","Education / pipeline","Marketing"],["Product-led / referrals","Activation / growth","Product / Growth"]],
+ assets:[["Messaging & positioning document","Align communication","Marketing"],["Landing page / website updates","Convert target audience","Web / Marketing"],["Paid media creatives","Generate demand","Performance Marketing"],["Organic social content","Build awareness and trust","Content / Social"],["Email sequences","Nurture and activate","Lifecycle Marketing"],["Sales deck & one-pager","Support sales conversations","Product Marketing"],["Demo / product walkthrough","Explain product value","Product / Sales"],["Case study / testimonials","Establish credibility","Marketing / CS"],["PR / launch announcement","Build awareness and authority","PR / Marketing"],["Analytics & dashboard","Track performance","Growth / Analytics"]],
+ budget:[["Paid media"],["Content and creative"],["Website / landing pages"],["Events / webinars"],["PR / influencers / partnerships"],["Marketing tools / data"],["Agency / contractor costs"],["Contingency"]],
+ teams:[["Marketing","Positioning, campaigns, demand, measurement","Campaign plan and KPI dashboard"],["Product","Product readiness and roadmap","Launch scope and release sign-off"],["Sales","Qualification, follow-up, closing","Sales playbook and follow-up SLA"],["Customer Success","Onboarding, adoption, retention","Onboarding and escalation plan"],["RevOps / Analytics","CRM, routing, attribution","Tested data flow and reporting"],["Finance","Budget, pricing, unit economics","Budget and commercial approval"],["Legal / Compliance","Claims, privacy, regulatory requirements","Required approvals"],["Executive sponsor","Direction, resources, decisions","Final go/no-go approval"]],
+ roadmap:[["T−8 weeks","Discovery","Market research, customer insights, baseline","Opportunity validated"],["T−7 weeks","ICP & positioning","ICP, personas, value proposition","Stakeholder approval"],["T−6 weeks","Strategy","GTM motion, channels, funnel, budget","Plan approved"],["T−5 weeks","Creative & content","Messaging, creative briefs, content plan","Production underway"],["T−4 weeks","Infrastructure","Landing pages, CRM, tracking, automation","Initial QA passed"],["T−3 weeks","Production","Campaign assets, sales enablement","Core assets complete"],["T−2 weeks","Testing","QA, pilot campaigns, sales training","Critical issues resolved"],["T−1 week","Launch readiness","Final checks, approvals, contingency plan","Go/no-go decision"],["Launch week","Activation","Campaigns live, launch communications","Tracking and routing verified"],["T+1 week","Early optimization","Initial performance review, fixes","Priority improvements assigned"],["T+2 weeks","Optimization","Creative, channel, and funnel tests","Test decisions documented"],["T+3 weeks","Commercial review","Pipeline, conversion, feedback","Bottlenecks addressed"],["T+4 weeks","Scale decision","Performance review and next-month plan","Scale, iterate, or stop"]],
+ optimize:[["First 48–72 hours","Is tracking working? Are campaigns delivering?","Fix technical issues; correct spend or routing"],["End of week 1","Are we reaching the right audience?","Refine targeting and messaging"],["End of week 2","Where is funnel conversion breaking?","Test landing page, offer, nurture, or follow-up"],["End of week 3","Are leads becoming pipeline or users active?","Improve qualification and activation"],["Day 30","Are economics and outcomes on target?","Scale winners, revise assumptions, or stop weak channels"],["Day 60–90","Are customers retained and generating value?","Optimize onboarding, retention, expansion, and LTV"]],
+ risks:[["Launch delay","Medium","High","Prioritize must-have scope; define fallback",""],["Poor campaign conversion","Medium","High","Pre-launch tests; alternative messaging",""],["Acquisition costs too high","Medium","High","Spending thresholds and stop-loss rules",""],["Low sales follow-up","Medium","Medium","SLA, alerts, ownership",""],["Tracking failure","Low","High","QA, monitoring, backup reporting",""],["Product or compliance issue","Low","High","Approval gates and escalation plan",""]]
+};
+let projects = [];
+let currentId = null;
+let currentSection = "brief";
+const $ = id => document.getElementById(id);
+function load(){try{projects=JSON.parse(localStorage.getItem("gtmPlannerProjects")||"[]")}catch(e){projects=[]}if(!projects.length)projects=[defaultProject()];currentId=projects[0].id;projects.forEach(ensureProject);save(false)}
+function ensureProject(p){
+ const d=p.data||(p.data={}); const base=defaultProject().data;
+ for(const k in base){if(!d[k])d[k]=structuredClone(base[k])}
+ for(const k of ["channels","assets","budget","teams","roadmap","optimize","risks"]){if(!Array.isArray(d[k].rows))d[k].rows=[]}
+ if(!d.channels.rows.length)d.channels.rows=taskDefaults.channels.map(r=>({channel:r[0],role:r[1],audience:"",offer:"",asset:"",budget:"",kpi:"",owner:r[2],date:"",test:"",status:"Not started"}));
+ if(!d.assets.rows.length)d.assets.rows=taskDefaults.assets.map(r=>({asset:r[0],purpose:r[1],owner:r[2],due:"",status:"Not started",reviewer:"",quantity:""}));
+ if(!d.budget.rows.length)d.budget.rows=taskDefaults.budget.map(r=>({category:r[0],planned:"",actual:"",owner:""}));
+ if(!d.teams.rows.length)d.teams.rows=taskDefaults.teams.map(r=>({team:r[0],responsibility:r[1],deliverable:r[2],owner:"",due:"",status:"Not started"}));
+ if(!d.roadmap.rows.length)d.roadmap.rows=taskDefaults.roadmap.map(r=>({timing:r[0],workstream:r[1],deliverables:r[2],exit:r[3],owner:"",due:"",status:"Not started"}));
+ if(!d.optimize.rows.length)d.optimize.rows=taskDefaults.optimize.map(r=>({review:r[0],questions:r[1],actions:r[2],owner:"",date:"",result:""}));
+ if(!d.risks.rows.length)d.risks.rows=taskDefaults.risks.map(r=>({risk:r[0],probability:r[1],impact:r[2],mitigation:r[3],owner:r[4],status:"Open"}));
+ if(!Array.isArray(d.kpiRows))d.kpiRows=[{stage:"Awareness",kpi:"Reach / share of voice",target:"",baseline:"",source:"",owner:""},{stage:"Acquisition",kpi:"Qualified traffic / CPL",target:"",baseline:"",source:"",owner:""},{stage:"Conversion",kpi:"Lead-to-opportunity / win rate",target:"",baseline:"",source:"",owner:""},{stage:"Revenue",kpi:"Pipeline / bookings / ARR",target:"",baseline:"",source:"",owner:""},{stage:"Activation",kpi:"Activation / time to value",target:"",baseline:"",source:"",owner:""},{stage:"Retention",kpi:"Retention / churn / expansion",target:"",baseline:"",source:"",owner:""},{stage:"Efficiency",kpi:"CAC / ROAS / LTV:CAC",target:"",baseline:"",source:"",owner:""}];
+ for(const g of ["research","tracking","launch","handover"])d[g].checks=migrateChecks(g,d[g].checks);
+ d.brief.budget=parseAmount(d.brief.budget);
+ if(!Array.isArray(d.assets.calendar))d.assets.calendar=[];
+ p.name=p.name||d.brief.product||"New GTM project";
+}
+function save(show=true){localStorage.setItem("gtmPlannerProjects",JSON.stringify(projects));if(show)toast("Saved in this browser");updateChrome()}
+function project(){return projects.find(p=>p.id===currentId)||projects[0]}
+function d(){return project().data}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function toast(s){const t=$("toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
+function field(key,label,value="",type="text",opts=null,full=false){let control;if(opts){control=`<select data-bind="${key}">${opts.map(o=>`<option ${o===value?"selected":""}>${esc(o)}</option>`).join("")}</select>`}else if(type==="textarea"){control=`<textarea data-bind="${key}" placeholder="Add details...">${esc(value)}</textarea>`}else{control=`<input data-bind="${key}" type="${type}" value="${esc(value)}" placeholder="Enter ${label.toLowerCase()}">`}return `<div class="field ${full?"full":""}"><label>${label}</label>${control}</div>`}
+function section(id,title,intro,body){return `<section class="section ${currentSection===id?"active":""}" id="sec-${id}"><div class="section-head"><div><h2>${title}</h2><p class="intro">${intro}</p></div><span class="pill">${navItems.find(x=>x[0]===id)?.[1]||""} / GTM WORKSPACE</span></div>${body}<div class="section-footer"><button class="btn" data-prev="${id}">← Previous</button><button class="btn primary" data-next="${id}">Save & continue →</button></div></section>`}
+function table(headers,rows,cols,key,options={}){let out=`<div class="table-wrap"><table class="data-table"><thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}<th></th></tr></thead><tbody>`;rows.forEach((r,i)=>{out+=`<tr>${cols.map(c=>{let v=r[c.key]??"";let attr=`data-row="${key}" data-index="${i}" data-key="${c.key}"`;let input=c.options?`<select ${attr}>${c.options.map(o=>`<option ${o===v?"selected":""}>${esc(o)}</option>`).join("")}</select>`:c.type==="textarea"?`<textarea ${attr}>${esc(v)}</textarea>`:`<input ${attr} type="${c.type||"text"}" value="${esc(v)}" placeholder="${esc(c.placeholder||"")}">`;return `<td>${input}</td>`}).join("")}<td><button class="btn danger" data-delete="${key}" data-index="${i}" title="Delete row">×</button></td></tr>`});out+=`</tbody></table></div><button class="btn" data-add="${key}">＋ Add row</button>`;return out}
+function checklist(items,checked,group){return `<div class="checklist">${items.map(it=>{const id=checkId(group,it);let done=!!checked[id];return `<label class="checkrow ${done?"done":""}"><input type="checkbox" data-check="${group}" data-id="${esc(id)}" ${done?"checked":""}><span>${esc(it[0]||it)}${it[1]?`<small>${esc(it[1])}${it[2]?` · Suggested owner: ${esc(it[2])}`:""}</small>`:""}</span></label>`}).join("")}</div>`}
+function render(){
+ const x=d();let s="";
+ s+=section("brief","GTM brief","Define the launch in one page. This is the source of truth for the team.",`<div class="grid">${field("brief.product","Product / offer",x.brief.product)}${field("brief.type","GTM type",x.brief.type,"text",["New product","New market","New segment","Relaunch","New pricing / packaging","New channel"])}${field("brief.objective","Business objective",x.brief.objective,"textarea",null,true)}${field("brief.launchDate","Target launch date",x.brief.launchDate,"date")}${field("brief.market","Target market",x.brief.market)}${field("brief.audience","Primary audience / ICP",x.brief.audience,"textarea")}${field("brief.valueProp","Core value proposition",x.brief.valueProp,"textarea")}${field("brief.motion","Primary GTM motion",x.brief.motion,"text",["Sales-led","Marketing-led","PLG","Partner-led","Hybrid"])}${field("brief.budget","Total launch budget",x.brief.budget,"number")}${field("brief.currency","Currency",x.brief.currency,"text",["USD","EUR","GBP","ILS","CAD","AUD","Other"])}${field("brief.target","Revenue / adoption target",x.brief.target)}${field("brief.owner","GTM owner",x.brief.owner)}${field("brief.sponsor","Executive sponsor",x.brief.sponsor)}</div><div class="notice">Example objective: Generate 150 qualified leads, 30 sales-qualified opportunities, and 5 new customers within 60 days. Replace with targets grounded in your own economics and baseline data.</div>`);
+ s+=section("research","Research & validation","Validate the customer problem, market opportunity, competitive context, and demand before committing the budget.",`<p class="subhead">Research checklist</p>${checklist(defaultChecklist.research,x.research.checks,"research")}<div class="grid" style="margin-top:16px">${field("research.notes","Evidence, insights, assumptions, open questions",x.research.notes,"textarea",null,true)}${field("research.recommendation","Recommendation",x.research.recommendation,"text",["Proceed","Test further","Stop"],true)}</div>`);
+ s+=section("positioning","ICP & positioning","Agree on who you serve, the problem you solve, and why the audience should choose you.",`<div class="grid">${field("positioning.icp","Primary ICP",x.positioning.icp,"textarea")}${field("positioning.secondary","Secondary ICP",x.positioning.secondary,"textarea")}${field("positioning.buyer","Buyer vs. user",x.positioning.buyer)}${field("positioning.pain","Core pain point",x.positioning.pain,"textarea")}${field("positioning.alternative","Current alternative / competitor",x.positioning.alternative,"textarea")}${field("positioning.value","Value proposition",x.positioning.value,"textarea")}${field("positioning.differentiation","Differentiation",x.positioning.differentiation,"textarea")}${field("positioning.proof","Proof points",x.positioning.proof,"textarea")}${field("positioning.message","Primary message",x.positioning.message,"textarea")}${field("positioning.cta","Primary CTA",x.positioning.cta)}${field("positioning.objections","Likely objections & responses",x.positioning.objections,"textarea",null,true)}</div><div class="notice"><b>Messaging framework:</b> Problem → Promise → Mechanism → Proof → Action. Reuse the foundation across ads, landing pages, email, sales materials, PR, and partner channels.</div>`);
+ const channels=["Paid search","Paid social","SEO / AEO","Content marketing","Email / lifecycle","Organic social","Influencers / KOLs","PR / media","Outbound sales","Partnerships / affiliates","Events / webinars","Product-led / referrals"];
+ s+=section("channels","Channel strategy","Choose channels based on how your audience discovers, evaluates, and buys. Give every channel a KPI and an owner.",`<div class="grid">${field("channels.motion","Primary GTM motion",x.channels.motion,"text",["Sales-led","Marketing-led","PLG","Partner-led","Hybrid"])}<div class="field"><label>Channel selection</label><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px">${channels.map(ch=>`<label style="font-size:13px;font-weight:500"><input type="checkbox" data-channel="${esc(ch)}" ${x.channels.selected.includes(ch)?"checked":""}> ${esc(ch)}</label>`).join("")}</div></div></div><p class="subhead">Channel execution matrix</p>${table(["Channel","Funnel role","Audience","Offer / message","Asset","Budget","KPI","Owner","Launch date","Test hypothesis","Status"],x.channels.rows,[{key:"channel"},{key:"role"},{key:"audience"},{key:"offer"},{key:"asset"},{key:"budget"},{key:"kpi"},{key:"owner"},{key:"date",type:"date"},{key:"test",type:"textarea"},{key:"status",options:["Not started","In progress","Blocked","Ready","Live","Complete"]}],"channels.rows")}`);
+ const f=x.funnel;
+ s+=section("funnel","Funnel & KPIs","Work backward from the business outcome. Keep assumptions visible and review them against actual results.",`<div class="grid">${field("funnel.customers","Target new customers",f.customers,"number")}${field("funnel.winRate","Opportunity-to-customer win rate (%)",f.winRate,"number")}${field("funnel.leadRate","Lead-to-opportunity conversion (%)",f.leadRate,"number")}${field("funnel.cpl","Estimated cost per lead",f.cpl,"number")}${field("funnel.revenue","Average revenue per new customer",f.revenue,"number")}${field("funnel.margin","Gross margin (%)",f.margin,"number")}${field("funnel.notes","Assumptions / source of rates",f.notes,"textarea",null,true)}</div><div class="kpi-results" id="funnelResults">${funnelResultsHTML(f,x.brief.currency)}</div><div class="notice">Lead spend excludes other acquisition, sales, tooling, and launch costs. This simplified model does not include revenue timing, churn, cash collection, or multi-touch attribution.</div><p class="subhead">KPI scorecard</p>${table(["Funnel stage","Primary KPI","Target","Baseline","Reporting source","Owner"],x.kpiRows,[{key:"stage"},{key:"kpi"},{key:"target"},{key:"baseline"},{key:"source"},{key:"owner"}],"kpiRows")}`);
+ s+=section("assets","Assets & content","Turn strategy into tangible deliverables with owners, due dates, reviewers, and a clear launch status.",`<p class="subhead">Asset production tracker</p>${table(["Asset / deliverable","Purpose","Owner","Due date","Status","Reviewer","Quantity / format"],x.assets.rows,[{key:"asset"},{key:"purpose"},{key:"owner"},{key:"due",type:"date"},{key:"status",options:["Not started","In progress","Blocked","Ready for review","Approved","Live","Complete"]},{key:"reviewer"},{key:"quantity"}],"assets.rows")}<p class="subhead">Campaign & content calendar</p>${table(["Date","Channel","Activity","Audience","CTA","KPI","Owner","Status"],x.assets.calendar,[{key:"date",type:"date"},{key:"channel"},{key:"activity"},{key:"audience"},{key:"cta"},{key:"kpi"},{key:"owner"},{key:"status",options:["Planned","In progress","Scheduled","Live","Complete"]}],"assets.calendar")}`);
+ s+=section("budget","Budget & resources","Track the full cost of execution, not only paid media. Include production, tooling, agencies, and contingency.",`<p class="subhead">Budget tracker (${esc(x.brief.currency||"currency")})</p>${table(["Cost category","Planned budget","Actual spend","Owner"],x.budget.rows,[{key:"category"},{key:"planned",type:"number"},{key:"actual",type:"number"},{key:"owner"}],"budget.rows")}<div class="kpi-results"><div class="result"><span>Total planned</span><strong>${sum(x.budget.rows,"planned").toLocaleString()}</strong></div><div class="result"><span>Total actual</span><strong>${sum(x.budget.rows,"actual").toLocaleString()}</strong></div><div class="result"><span>Remaining</span><strong>${(sum(x.budget.rows,"planned")-sum(x.budget.rows,"actual")).toLocaleString()}</strong></div></div><div class="notice">Include internal team capacity and dependencies. A funded launch can still slip if Product, Design, Sales, or Engineering cannot deliver on time.</div>`);
+ s+=section("tracking","Analytics & tracking","Ensure you can measure the customer journey from first touch through conversion, revenue, and retention.",`${checklist(defaultChecklist.tracking,x.tracking.checks,"tracking")}<div class="grid" style="margin-top:16px">${field("tracking.notes","Tracking plan, event names, attribution rules, dashboard links",x.tracking.notes,"textarea",null,true)}</div>`);
+ s+=section("teams","Team alignment","Make cross-functional handoffs explicit. Every responsibility needs an owner, a deliverable, and a deadline.",table(["Team","Responsibility","Required deliverable","Owner","Due date","Status"],x.teams.rows,[{key:"team"},{key:"responsibility"},{key:"deliverable"},{key:"owner"},{key:"due",type:"date"},{key:"status",options:["Not started","In progress","Blocked","Ready","Complete"]}],"teams.rows")+`<div class="notice">For B2B, define lead qualification, response SLA, sales sequence, opportunity stages, and feedback loops. For B2C / PLG, define onboarding, activation, support, purchase, and retention workflows.</div>`);
+ s+=section("roadmap","Execution roadmap","Use this as the master milestone tracker. Replace relative timing with actual dates and validate dependencies.",table(["Timing","Workstream","Deliverables","Exit criteria","Owner","Due date","Status"],x.roadmap.rows,[{key:"timing"},{key:"workstream"},{key:"deliverables",type:"textarea"},{key:"exit",type:"textarea"},{key:"owner"},{key:"due",type:"date"},{key:"status",options:["Not started","In progress","Blocked","Ready","Complete"]}],"roadmap.rows")+`<div class="notice">Dependencies matter: campaign production depends on approved messaging; performance analysis depends on reliable tracking. Record blockers and decision dates.</div>`);
+ s+=section("launch","Launch readiness","Use this checklist in a go/no-go meeting. A completed checklist is not a substitute for formal approval.",`${checklist(defaultChecklist.launch,x.launch.checks,"launch")}<div class="grid" style="margin-top:16px">${field("launch.decision","Go / no-go decision",x.launch.decision,"text",["Pending","Go","Conditional go","No-go"])}${field("launch.decisionOwner","Decision owner",x.launch.decisionOwner)}${field("launch.decisionDate","Decision date",x.launch.decisionDate,"date")}${field("launch.notes","Open blockers, conditions, or decision notes",x.launch.notes,"textarea",null,true)}</div><div class="notice">Do not waive a critical security, compliance, or product-readiness blocker just to meet a launch date.</div>`);
+ s+=section("optimize","Post-launch optimization","Schedule reviews that turn data into decisions. Record outcomes and next actions instead of reporting metrics without context.",table(["Review timing","Questions to answer","Possible actions","Owner","Review date","Outcome / decision"],x.optimize.rows,[{key:"review"},{key:"questions",type:"textarea"},{key:"actions",type:"textarea"},{key:"owner"},{key:"date",type:"date"},{key:"result",type:"textarea"}],"optimize.rows")+`<div class="grid" style="margin-top:16px">${field("optimize.notes","Experiment log / learnings",x.optimize.notes,"textarea",null,true)}</div><div class="notice"><b>Experiment format:</b> Observation → Hypothesis → Change → Success metric → Decision date → Outcome. Do not scale channels based on clicks or cheap leads alone.</div>`);
+ s+=section("risks","Risk register","Identify what could derail the launch, assess probability and impact, and assign mitigation owners.",table(["Risk","Probability","Impact","Mitigation / contingency","Owner","Status"],x.risks.rows,[{key:"risk"},{key:"probability",options:["Low","Medium","High"]},{key:"impact",options:["Low","Medium","High"]},{key:"mitigation",type:"textarea"},{key:"owner"},{key:"status",options:["Open","Mitigating","Accepted","Resolved"]}],"risks.rows"));
+ s+=section("meetings","Weekly operating meeting","Use a short recurring meeting to make decisions and remove blockers, not just read status updates.",`<div class="grid">${field("meetings.cadence","Review cadence",x.meetings.cadence,"text",["Twice weekly","Weekly","Biweekly"])}${field("meetings.attendees","Required attendees",x.meetings.attendees,"textarea")}${field("meetings.agenda","Agenda",x.meetings.agenda,"textarea",null,true)}${field("meetings.notes","Decisions, action items, owner, due date",x.meetings.notes,"textarea",null,true)}</div><div class="notice"><b>Suggested 30–45 minute agenda:</b> Scorecard (5m), channel performance (10m), execution blockers (10m), experiments (5m), decisions and owners (5–15m). Every action needs one accountable owner and a due date.</div>`);
+ s+=section("handover","Final handover","The plan is ready when another marketer can execute it without needing you to explain the strategy from scratch.",`${checklist(defaultChecklist.handover,x.handover.checks,"handover")}<div class="grid" style="margin-top:16px">${field("handover.notes","Handover notes, links to working docs, key decisions",x.handover.notes,"textarea",null,true)}</div><div class="notice">Final test: can the next person see what needs to happen, who owns each task, what success looks like, and what to do next?</div>`);
+ $("sections").innerHTML=s;bindControls();updateChrome();
+}
+function computeFunnel(f){
+ const customers=+f.customers||0,win=(+f.winRate||0)/100,lr=(+f.leadRate||0)/100;
+ const valid=customers>0&&win>0&&lr>0;
+ const opp=valid?Math.ceil(customers/win):0, leads=valid?Math.ceil(opp/lr):0;
+ const spend=leads*(+f.cpl||0), rev=customers*(+f.revenue||0), profit=rev*(+f.margin||0)/100;
+ return {valid,opp,leads,spend,rev,profit,perCustomer:customers?Math.round(spend/customers):null};
+}
+function funnelResultsHTML(f,cur){
+ const r=computeFunnel(f),n=v=>Math.round(v).toLocaleString(),m=v=>(cur?cur+" ":"")+n(v);
+ const card=(l,v)=>`<div class="result"><span>${l}</span><strong>${v}</strong></div>`;
+ if(!r.valid)return card("Required leads","—")+card("Required opportunities","—")+`<div class="result"><span>Check inputs</span><strong style="font-size:13px">Customers, win rate and lead-to-opp rate must be above 0</strong></div>`;
+ return card("Required leads",n(r.leads))+card("Required opportunities",n(r.opp))+card("Estimated lead spend",m(r.spend))+card("Expected revenue",m(r.rev))+card("Estimated gross profit",m(r.profit))+card("Blended spend / target customer",r.perCustomer==null?"—":m(r.perCustomer));
+}
+function sum(rows,k){return rows.reduce((a,r)=>a+(Number(r[k])||0),0)}
+function getPath(path){return path.split(".").reduce((o,k)=>o?.[k],d())}
+function setPath(path,val){let parts=path.split("."),o=d();for(let i=0;i<parts.length-1;i++)o=o[parts[i]];o[parts.at(-1)]=val;if(path==="brief.product"){project().name=val||"New GTM project";renderProjectSelect()}}
+function bindControls(){
+ document.querySelectorAll("[data-bind]").forEach(el=>{const update=()=>{const v=el.type==="number"?(el.value===""?"":Number(el.value)):el.value;setPath(el.dataset.bind,v);save(false);if(el.dataset.bind.startsWith("funnel.")){const box=$("funnelResults");if(box)box.innerHTML=funnelResultsHTML(d().funnel,d().brief.currency)}};el.addEventListener("input",update);el.addEventListener("change",update)});
+ document.querySelectorAll("[data-check]").forEach(el=>el.addEventListener("change",()=>{d()[el.dataset.check].checks[el.dataset.id]=el.checked;save(false);render()}));
+ document.querySelectorAll("[data-channel]").forEach(el=>el.addEventListener("change",()=>{const ch=el.dataset.channel;let a=d().channels.selected;a=el.checked?[...new Set([...a,ch])]:a.filter(x=>x!==ch);d().channels.selected=a;save(false)}));
+ document.querySelectorAll("[data-row]").forEach(el=>{const update=()=>{const arr=resolveArray(el.dataset.row);if(!arr[+el.dataset.index])return;arr[+el.dataset.index][el.dataset.key]=el.value;save(false)};el.addEventListener("change",update);if(el.tagName==="TEXTAREA"||el.type==="text"||el.type==="number")el.addEventListener("input",update)});
+ document.querySelectorAll("[data-add]").forEach(el=>el.addEventListener("click",()=>{const key=el.dataset.add,arr=resolveArray(key);arr.push(blankRow(key));save(false);render()}));
+ document.querySelectorAll("[data-delete]").forEach(el=>el.addEventListener("click",()=>{resolveArray(el.dataset.delete).splice(+el.dataset.index,1);save(false);render()}));
+ document.querySelectorAll("[data-next]").forEach(el=>el.addEventListener("click",()=>goSection(1)));
+ document.querySelectorAll("[data-prev]").forEach(el=>el.addEventListener("click",()=>goSection(-1)));
+}
+function resolveArray(key){if(key==="kpiRows"){d().kpiRows=d().kpiRows||[];return d().kpiRows}return key.split(".").reduce((o,k)=>o[k],d())}
+function blankRow(key){const templates={
+ "channels.rows":{channel:"",role:"",audience:"",offer:"",asset:"",budget:"",kpi:"",owner:"",date:"",test:"",status:"Not started"},
+ "assets.rows":{asset:"",purpose:"",owner:"",due:"",status:"Not started",reviewer:"",quantity:""},
+ "assets.calendar":{date:"",channel:"",activity:"",audience:"",cta:"",kpi:"",owner:"",status:"Planned"},
+ "budget.rows":{category:"",planned:"",actual:"",owner:""},
+ "teams.rows":{team:"",responsibility:"",deliverable:"",owner:"",due:"",status:"Not started"},
+ "roadmap.rows":{timing:"",workstream:"",deliverables:"",exit:"",owner:"",due:"",status:"Not started"},
+ "optimize.rows":{review:"",questions:"",actions:"",owner:"",date:"",result:""},
+ "risks.rows":{risk:"",probability:"Medium",impact:"Medium",mitigation:"",owner:"",status:"Open"},
+ "kpiRows":{stage:"",kpi:"",target:"",baseline:"",source:"",owner:""}
+};return structuredClone(templates[key]||{})}
+function goSection(delta){let i=navItems.findIndex(n=>n[0]===currentSection);currentSection=navItems[Math.max(0,Math.min(navItems.length-1,i+delta))][0];render();window.scrollTo({top:0,behavior:"smooth"})}
+function renderProjectSelect(){$("projectSelect").innerHTML=projects.map(p=>`<option value="${esc(p.id)}" ${p.id===currentId?"selected":""}>${esc(p.name||"Untitled GTM")}</option>`).join("")}
+function countChecks(obj){return Object.values(obj||{}).filter(Boolean).length}
+function statusRows(){const x=d();return [...x.channels.rows,...x.assets.rows,...x.assets.calendar,...x.teams.rows,...x.roadmap.rows,...x.risks.rows]}
+function completion(){
+ let total=0,done=0;
+ ["research","tracking","launch","handover"].forEach(k=>{const items=defaultChecklist[k],checks=d()[k].checks||{};total+=items.length;done+=items.filter(it=>checks[checkId(k,it)]).length});
+ // Only rows that carry a status count as tasks (budget and optimization rows have none)
+ statusRows().forEach(r=>{total++;if(isDone(r.status))done++});
+ return {total,done,pct:total?Math.round(done/total*100):0};
+}
+function updateChrome(){
+ const x=d();$("heroTitle").textContent=project().name||x.brief.product||"Build your next launch plan";
+ const date=x.brief.launchDate;$("statDate").textContent=date?new Date(date+"T12:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}):"Not set";
+ const days=date?Math.round((new Date(date+"T00:00:00")-new Date(new Date().toDateString()))/86400000):null;
+ $("statDaysLabel").textContent=days!=null&&days<0?"Days since launch":"Days to launch";
+ $("statDays").textContent=days==null?"—":days===0?"Launch day":String(Math.abs(days));
+ $("statBudget").textContent=x.brief.budget!==""&&x.brief.budget!=null&&!isNaN(+x.brief.budget)?`${x.brief.currency||""} ${Number(x.brief.budget).toLocaleString()}`:"Not set";
+ $("statTasks").textContent=statusRows().filter(r=>!isDone(r.status)).length;
+ const c=completion();$("progressText").textContent=c.pct+"%";$("progressFill").style.width=c.pct+"%";$("progressDetail").textContent=`${c.done} completed status/check items of ${c.total}.`;
+ document.querySelectorAll(".nav button").forEach(b=>{const id=b.dataset.section;b.classList.toggle("active",id===currentSection);const section=document.querySelector("#sec-"+id);if(section){const checks=section.querySelectorAll('input[type="checkbox"]:checked').length;const all=section.querySelectorAll('input[type="checkbox"]').length;const badge=b.querySelector(".count");if(badge)badge.textContent=all?`${checks}/${all}`:""}})
+}
+function buildNav(){$("nav").innerHTML=navItems.map(n=>`<button data-section="${n[0]}" class="${n[0]===currentSection?"active":""}"><span>${n[1]} &nbsp; ${n[2]}</span><span class="count"></span></button>`).join("");$("nav").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{currentSection=b.dataset.section;render();window.scrollTo({top:0,behavior:"smooth"})}))}
+function download(filename,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url)}
+function exportJSON(){download((project().name||"gtm-plan").toLowerCase().replace(/[^a-z0-9]+/g,"-")+".json",JSON.stringify(project(),null,2),"application/json")}
+function exportCSV(){const rows=[];const add=(section,arr)=>arr.forEach(r=>rows.push({section,...r}));add("Channel plan",d().channels.rows);add("Assets",d().assets.rows);add("Content calendar",d().assets.calendar);add("Budget",d().budget.rows);add("Team alignment",d().teams.rows);add("Roadmap",d().roadmap.rows);add("Optimization",d().optimize.rows);add("Risks",d().risks.rows);const keys=[...new Set(rows.flatMap(r=>Object.keys(r)))];const csv=[keys.join(","),...rows.map(r=>keys.map(k=>`"${String(r[k]??"").replace(/"/g,'""')}"`).join(","))].join("\r\n");download("gtm-tasks.csv",csv,"text/csv;charset=utf-8")}
+$("newProject").addEventListener("click",()=>{const p=defaultProject();p.name="New GTM project "+(projects.length+1);ensureProject(p);projects.push(p);currentId=p.id;currentSection="brief";save(false);renderProjectSelect();render();toast("New GTM workspace created")});
+$("renameProject").addEventListener("click",()=>{const n=prompt("Project name",project().name||"");if(n==null)return;const v=n.trim();if(!v)return;project().name=v;save(false);renderProjectSelect();updateChrome();toast("Project renamed")});
+$("deleteProject").addEventListener("click",()=>{const p=project();if(!confirm(`Delete "${p.name}"? This cannot be undone. Export JSON first if you want a backup.`))return;projects=projects.filter(q=>q.id!==p.id);if(!projects.length){const np=defaultProject();ensureProject(np);projects=[np]}currentId=projects[0].id;currentSection="brief";save(false);renderProjectSelect();render();toast("Project deleted")});
+$("projectSelect").addEventListener("change",e=>{currentId=e.target.value;currentSection="brief";render();updateChrome()});
+$("exportJson").addEventListener("click",exportJSON);$("exportCsv").addEventListener("click",exportCSV);$("printBtn").addEventListener("click",()=>window.print());
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const p=JSON.parse(await f.text());if(!p.data)throw Error("Not a GTM project file");ensureProject(p);p.id=crypto.randomUUID?crypto.randomUUID():String(Date.now());projects.push(p);currentId=p.id;save(false);renderProjectSelect();render();toast("Project imported")}catch(err){alert("Could not import this file. Choose a JSON export from this app.")}e.target.value=""});
+function init(){load();buildNav();renderProjectSelect();render()}
+init();
+</script>
+</body>
+</html>

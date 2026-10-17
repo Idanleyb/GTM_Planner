@@ -1,0 +1,823 @@
+{
+  "id": "test-pimp-my-prompt",
+  "name": "Pimp My Prompt — Public launch (TEST DATA)",
+  "data": {
+    "brief": {
+      "product": "Pimp My Prompt — Public launch (TEST DATA)",
+      "type": "New product",
+      "objective": "Reach 120 paying Pro subscribers and 2,300 free sign-ups within 60 days of launch, with paid CAC under $80 and at least 35% of sign-ups scoring a second prompt within 7 days (activation).",
+      "launchDate": "2026-12-01",
+      "market": "English-speaking B2B and B2C marketers (US, UK, Israel tech scene); remote-first teams",
+      "audience": "In-house marketers and freelancers (1–10 person teams) who use ChatGPT/Claude/Midjourney daily but have no feedback loop on prompt quality or tool choice.",
+      "valueProp": "Paste your goal, tool and prompt — get a scored breakdown and concrete rewrites in 30 seconds, so every AI task produces usable output on the first or second try.",
+      "motion": "PLG",
+      "budget": 15000,
+      "currency": "USD",
+      "target": "120 Pro subscribers ($19/mo) ≈ $27K ARR run-rate by Jan 30, 2027",
+      "owner": "Idan Leibovitch",
+      "sponsor": "Idan Leibovitch (founder)"
+    },
+    "research": {
+      "checks": {
+        "research:define-market-size-and-opportunity": true,
+        "research:define-icp-ideal-customer-profile": true,
+        "research:map-buyer-personas-and-decision-makers": true,
+        "research:interview-customers-and-prospects": true,
+        "research:analyze-competitors-and-alternatives": true,
+        "research:audit-existing-performance-and-customer-data": false,
+        "research:validate-demand-and-willingness-to-pay": true
+      },
+      "recommendation": "Proceed",
+      "notes": "• 14 interviews with in-house marketers and freelancers (Sep–Oct): 11 said they 'retry prompts 3+ times' for ad copy; 9 had never compared tools for a task.\n• Alternatives: prompt libraries (PromptBase, AIPRM), generic ChatGPT 'improve my prompt', internal playbooks. None scores tool-fit for the goal.\n• Waitlist: 640 sign-ups from 2 LinkedIn posts; 23% opened the beta invite and scored ≥3 prompts.\n• WTP: 7 of 14 interviewees would pay $15–25/mo; teams prefer seats + shared prompt library.\n• Open questions: retention after the 'aha' moment; whether agencies are a better secondary ICP than in-house teams.\n• Baseline audit not done yet — no historical funnel data (new product)."
+    },
+    "positioning": {
+      "icp": "In-house B2B/B2C marketer at a 10–200 person company, uses 3+ AI tools weekly for content, ads and creative, measured on output volume and campaign performance.",
+      "secondary": "Freelance marketers and small agencies (1–10 people) who deliver AI-assisted work to clients and need consistent quality.",
+      "buyer": "PLG: user = buyer for Pro. Team plan: marketing lead buys, team members use.",
+      "pain": "Wasting time retrying prompts and using the wrong AI tool for the job; no way to know if AI output is 'good' or how to improve the input.",
+      "alternative": "Trial and error in ChatGPT/Claude, prompt libraries (PromptBase, AIPRM), YouTube prompt courses, colleagues' Notion pages.",
+      "value": "Know in 30 seconds how good your prompt and tool choice are — and exactly what to change.",
+      "differentiation": "Scores the whole setup (goal + context + tool + prompt), not just the prompt text; recommends a better-fit tool when relevant; rubric built by a marketer for marketing tasks.",
+      "proof": "Beta: average prompt score rose from 54 to 78 after 3 scored prompts (n=148); 640-person waitlist; founder with 9 years in adtech/marketing.",
+      "message": "Stop guessing with AI. Score your prompt, fix it, ship better work.",
+      "cta": "Score your first prompt free",
+      "objections": "'ChatGPT can improve my prompt for free' → it rewrites text but doesn't evaluate tool-fit or score against marketing goals.\n'Is my prompt data safe?' → prompts aren't used for training; delete-anytime; clear privacy page.\n'$19 is a lot for a prompt tool' → one saved hour a month pays for it; free tier covers 10 scores/month.\n'My team has its own playbook' → Team plan lets you score against your own playbook rules (roadmap)."
+    },
+    "channels": {
+      "motion": "PLG",
+      "selected": [
+        "Paid social",
+        "Paid search",
+        "SEO / AEO",
+        "Content marketing",
+        "Email / lifecycle",
+        "Organic social",
+        "Influencers / KOLs",
+        "Product-led / referrals"
+      ],
+      "rows": [
+        {
+          "channel": "Organic social",
+          "role": "Awareness / trust",
+          "audience": "Marketers following Idan + AI-marketing community on LinkedIn",
+          "offer": "Before/after prompt teardown posts",
+          "asset": "Carousel template, 12 posts",
+          "budget": "0",
+          "kpi": "Sign-ups from LinkedIn ≥ 600",
+          "owner": "Idan",
+          "date": "2026-11-03",
+          "test": "Teardown carousels drive 2× profile→site CTR vs. text posts",
+          "status": "In progress"
+        },
+        {
+          "channel": "Paid social",
+          "role": "Awareness / acquisition",
+          "audience": "LinkedIn: Marketing titles, 10–200 employees; Meta: interest 'ChatGPT' + 'digital marketing'",
+          "offer": "Score your first prompt free",
+          "asset": "6 creatives (2 video, 4 static)",
+          "budget": "6500",
+          "kpi": "Cost per sign-up ≤ $4.50",
+          "owner": "Dan (Growth)",
+          "date": "2026-12-01",
+          "test": "Pain-led hook ('retrying prompts again?') beats outcome-led hook on CPA",
+          "status": "Not started"
+        },
+        {
+          "channel": "Paid search",
+          "role": "Conversion",
+          "audience": "High-intent queries: 'improve chatgpt prompt', 'best AI tool for ad copy'",
+          "offer": "Free prompt score",
+          "asset": "3 RSA ad groups + LP variant",
+          "budget": "2500",
+          "kpi": "Sign-up CVR ≥ 18%",
+          "owner": "Dan (Growth)",
+          "date": "2026-12-01",
+          "test": "Tool-comparison keywords convert better than generic prompt keywords",
+          "status": "Not started"
+        },
+        {
+          "channel": "SEO / AEO",
+          "role": "Discovery",
+          "audience": "Marketers searching tool comparisons and prompt guides",
+          "offer": "Free guides + embedded scorer",
+          "asset": "8 comparison/guide pages",
+          "budget": "0",
+          "kpi": "1,500 organic visits by Jan 30",
+          "owner": "Noa (Content)",
+          "date": "2026-11-17",
+          "test": "Pages with an embedded mini-scorer get 3× sign-up rate",
+          "status": "In progress"
+        },
+        {
+          "channel": "Content marketing",
+          "role": "Education / consideration",
+          "audience": "Waitlist + newsletter subscribers",
+          "offer": "'State of AI prompting in marketing' mini-report from beta data",
+          "asset": "Report PDF + landing page",
+          "budget": "600",
+          "kpi": "400 report downloads",
+          "owner": "Noa (Content)",
+          "date": "2026-12-01",
+          "test": "Data-led report earns more shares than how-to content",
+          "status": "Not started"
+        },
+        {
+          "channel": "Email / lifecycle",
+          "role": "Nurture / retention",
+          "audience": "Waitlist (640) + new sign-ups",
+          "offer": "Launch-day early-bird: Pro $12/mo for 3 months",
+          "asset": "Launch sequence (3) + onboarding sequence (5)",
+          "budget": "0",
+          "kpi": "Activation ≥ 35%; free→Pro ≥ 5%",
+          "owner": "Idan",
+          "date": "2026-12-01",
+          "test": "Day-2 'your score vs. peers' email lifts second-prompt rate by 10pts",
+          "status": "In progress"
+        },
+        {
+          "channel": "Influencers / KOLs",
+          "role": "Trust / reach",
+          "audience": "Followers of 5 marketing-AI creators (10K–80K)",
+          "offer": "Live teardown of their audience's prompts",
+          "asset": "Creator brief + affiliate links",
+          "budget": "1500",
+          "kpi": "300 sign-ups via affiliate links",
+          "owner": "Idan",
+          "date": "2026-12-03",
+          "test": "Live teardown format outperforms sponsored post",
+          "status": "Not started"
+        },
+        {
+          "channel": "Product-led / referrals",
+          "role": "Activation / growth",
+          "audience": "Activated free users",
+          "offer": "Share your score card → both get 5 extra scores",
+          "asset": "Shareable score card + referral flow",
+          "budget": "0",
+          "kpi": "K-factor ≥ 0.15",
+          "owner": "Yoav (Dev)",
+          "date": "2026-12-01",
+          "test": "Share card with peer percentile drives more shares than raw score",
+          "status": "In progress"
+        }
+      ]
+    },
+    "funnel": {
+      "customers": 120,
+      "winRate": 15,
+      "leadRate": 35,
+      "cpl": 4,
+      "revenue": 228,
+      "margin": 82,
+      "notes": "Mapped to PLG: 'lead' = free sign-up, 'opportunity' = activated user (2+ prompts scored within 7 days), 'customer' = paid Pro.\nRates from beta: activation 38% (using 35% to be conservative); activated→paid 15% is an assumption from comparable PLG tools (beta had no paywall).\nCPL = blended cost per sign-up; paid channels only, organic sign-ups lower the true blend.\nRevenue = first-year value of Pro ($19 × 12). Margin after Claude API + infra costs (~$3.40/user/mo)."
+    },
+    "assets": {
+      "rows": [
+        {
+          "asset": "Messaging & positioning document",
+          "purpose": "Align communication",
+          "owner": "Idan",
+          "due": "2026-10-20",
+          "status": "Approved",
+          "reviewer": "2 beta users",
+          "quantity": "1 doc"
+        },
+        {
+          "asset": "Landing page / website updates",
+          "purpose": "Convert target audience",
+          "owner": "Maya (Design)",
+          "due": "2026-11-10",
+          "status": "In progress",
+          "reviewer": "Idan",
+          "quantity": "Home + pricing + 2 LP variants"
+        },
+        {
+          "asset": "Paid media creatives",
+          "purpose": "Generate demand",
+          "owner": "Maya (Design)",
+          "due": "2026-11-17",
+          "status": "Not started",
+          "reviewer": "Dan (Growth)",
+          "quantity": "6 creatives, 3 sizes each"
+        },
+        {
+          "asset": "Organic social content",
+          "purpose": "Build awareness and trust",
+          "owner": "Idan",
+          "due": "2026-11-03",
+          "status": "In progress",
+          "reviewer": "Noa (Content)",
+          "quantity": "12 LinkedIn posts"
+        },
+        {
+          "asset": "Email sequences",
+          "purpose": "Nurture and activate",
+          "owner": "Noa (Content)",
+          "due": "2026-11-17",
+          "status": "In progress",
+          "reviewer": "Idan",
+          "quantity": "Launch ×3, onboarding ×5"
+        },
+        {
+          "asset": "Sales deck & one-pager",
+          "purpose": "Support Team-plan conversations",
+          "owner": "Idan",
+          "due": "2026-11-24",
+          "status": "Not started",
+          "reviewer": "—",
+          "quantity": "1-pager PDF"
+        },
+        {
+          "asset": "Demo / product walkthrough",
+          "purpose": "Explain product value",
+          "owner": "Yoav (Dev)",
+          "due": "2026-11-17",
+          "status": "Not started",
+          "reviewer": "Idan",
+          "quantity": "90-sec video"
+        },
+        {
+          "asset": "Case study / testimonials",
+          "purpose": "Establish credibility",
+          "owner": "Noa (Content)",
+          "due": "2026-11-24",
+          "status": "In progress",
+          "reviewer": "Idan",
+          "quantity": "5 beta quotes, 1 mini case"
+        },
+        {
+          "asset": "PR / launch announcement",
+          "purpose": "Build awareness and authority",
+          "owner": "Idan",
+          "due": "2026-11-26",
+          "status": "Not started",
+          "reviewer": "Noa (Content)",
+          "quantity": "Product Hunt page + LinkedIn launch post"
+        },
+        {
+          "asset": "Analytics & dashboard",
+          "purpose": "Track performance",
+          "owner": "Yoav (Dev)",
+          "due": "2026-11-17",
+          "status": "In progress",
+          "reviewer": "Dan (Growth)",
+          "quantity": "1 Supabase + PostHog dashboard"
+        }
+      ],
+      "calendar": [
+        {
+          "date": "2026-11-03",
+          "channel": "Organic social",
+          "activity": "Teaser series starts (prompt teardowns)",
+          "audience": "LinkedIn network",
+          "cta": "Join waitlist",
+          "kpi": "Waitlist +200",
+          "owner": "Idan",
+          "status": "Scheduled"
+        },
+        {
+          "date": "2026-11-17",
+          "channel": "SEO / AEO",
+          "activity": "Publish 8 comparison/guide pages",
+          "audience": "Search",
+          "cta": "Score a prompt",
+          "kpi": "Indexed + 100 visits/wk",
+          "owner": "Noa (Content)",
+          "status": "Planned"
+        },
+        {
+          "date": "2026-11-24",
+          "channel": "Email / lifecycle",
+          "activity": "Waitlist 'launch next week' + early-bird offer",
+          "audience": "Waitlist",
+          "cta": "Reserve early-bird",
+          "kpi": "Open rate ≥ 45%",
+          "owner": "Idan",
+          "status": "Planned"
+        },
+        {
+          "date": "2026-12-01",
+          "channel": "PR / media",
+          "activity": "Product Hunt launch + LinkedIn launch post",
+          "audience": "Tech + marketing community",
+          "cta": "Score your first prompt free",
+          "kpi": "Top 5 of the day; 500 sign-ups",
+          "owner": "Idan",
+          "status": "Planned"
+        },
+        {
+          "date": "2026-12-01",
+          "channel": "Paid social",
+          "activity": "LinkedIn + Meta campaigns go live",
+          "audience": "Marketing titles",
+          "cta": "Score your first prompt free",
+          "kpi": "CPA ≤ $4.50",
+          "owner": "Dan (Growth)",
+          "status": "Planned"
+        },
+        {
+          "date": "2026-12-03",
+          "channel": "Influencers / KOLs",
+          "activity": "First creator live teardown",
+          "audience": "Creator audience",
+          "cta": "Affiliate link sign-up",
+          "kpi": "100 sign-ups",
+          "owner": "Idan",
+          "status": "Planned"
+        },
+        {
+          "date": "2026-12-08",
+          "channel": "Content marketing",
+          "activity": "Release 'State of AI prompting in marketing' report",
+          "audience": "Newsletter + LinkedIn",
+          "cta": "Download report",
+          "kpi": "400 downloads",
+          "owner": "Noa (Content)",
+          "status": "Planned"
+        },
+        {
+          "date": "2026-12-15",
+          "channel": "Events / webinars",
+          "activity": "Live webinar: 'Fix your ad-copy prompts in 20 minutes'",
+          "audience": "Sign-ups + waitlist",
+          "cta": "Upgrade to Pro",
+          "kpi": "150 attendees; 15 upgrades",
+          "owner": "Idan",
+          "status": "Planned"
+        }
+      ]
+    },
+    "budget": {
+      "rows": [
+        {
+          "category": "Paid media",
+          "planned": 9000,
+          "actual": 0,
+          "owner": "Dan (Growth)"
+        },
+        {
+          "category": "Content and creative",
+          "planned": 1500,
+          "actual": 400,
+          "owner": "Maya (Design)"
+        },
+        {
+          "category": "Website / landing pages",
+          "planned": 500,
+          "actual": 120,
+          "owner": "Yoav (Dev)"
+        },
+        {
+          "category": "Events / webinars",
+          "planned": 800,
+          "actual": 0,
+          "owner": "Idan"
+        },
+        {
+          "category": "PR / influencers / partnerships",
+          "planned": 1500,
+          "actual": 0,
+          "owner": "Idan"
+        },
+        {
+          "category": "Marketing tools / data",
+          "planned": 700,
+          "actual": 210,
+          "owner": "Yoav (Dev)"
+        },
+        {
+          "category": "Agency / contractor costs",
+          "planned": 0,
+          "actual": 0,
+          "owner": "—"
+        },
+        {
+          "category": "Contingency",
+          "planned": 1000,
+          "actual": 0,
+          "owner": "Idan"
+        }
+      ]
+    },
+    "tracking": {
+      "checks": {
+        "tracking:define-funnel-stages-and-shared-qualification-criteria": true,
+        "tracking:implement-analytics-and-conversion-events": true,
+        "tracking:configure-campaign-naming-and-utm-parameters": true,
+        "tracking:connect-ad-platforms-crm-website-and-product-analytics": false,
+        "tracking:test-lead-capture-validation-routing-and-attribution": false,
+        "tracking:build-dashboard-for-spend-funnel-pipeline-and-revenue": false,
+        "tracking:configure-lead-scoring-and-nurture-flows-where-relevant": false,
+        "tracking:confirm-consent-privacy-and-data-retention-requirements": false,
+        "tracking:test-the-full-customer-journey-on-mobile-and-desktop": true,
+        "tracking:assign-dashboard-owner-and-reporting-frequency": false
+      },
+      "notes": "Events: signup_completed, prompt_scored, second_prompt_scored (activation), score_shared, upgrade_clicked, subscription_started.\nUTM: utm_source={platform}, utm_medium={paid|organic|email|creator}, utm_campaign=pmp_launch_{yyyymm}_{theme}.\nAttribution: first-touch stored on signup in Supabase; last-touch for paid reporting.\nDashboard: PostHog funnel + Supabase SQL view for paid conversions (link TBD)."
+    },
+    "teams": {
+      "rows": [
+        {
+          "team": "Marketing",
+          "responsibility": "Positioning, campaigns, demand, measurement",
+          "deliverable": "Campaign plan and KPI dashboard",
+          "owner": "Idan",
+          "due": "2026-11-10",
+          "status": "In progress"
+        },
+        {
+          "team": "Product",
+          "responsibility": "Product readiness and roadmap",
+          "deliverable": "Paywall, Pro plan, share card shipped",
+          "owner": "Yoav (Dev)",
+          "due": "2026-11-20",
+          "status": "In progress"
+        },
+        {
+          "team": "Sales",
+          "responsibility": "Team-plan inbound follow-up",
+          "deliverable": "Reply-within-24h SLA for Team inquiries",
+          "owner": "Idan",
+          "due": "2026-11-24",
+          "status": "Not started"
+        },
+        {
+          "team": "Customer Success",
+          "responsibility": "Onboarding, adoption, retention",
+          "deliverable": "In-app onboarding + help center (10 articles)",
+          "owner": "Noa (Content)",
+          "due": "2026-11-24",
+          "status": "Not started"
+        },
+        {
+          "team": "RevOps / Analytics",
+          "responsibility": "Events, attribution, Stripe → Supabase sync",
+          "deliverable": "Tested data flow and reporting",
+          "owner": "Yoav (Dev)",
+          "due": "2026-11-17",
+          "status": "In progress"
+        },
+        {
+          "team": "Finance",
+          "responsibility": "Budget, pricing, unit economics",
+          "deliverable": "Pricing page + API cost cap per free user",
+          "owner": "Idan",
+          "due": "2026-11-10",
+          "status": "Ready"
+        },
+        {
+          "team": "Legal / Compliance",
+          "responsibility": "Privacy, terms, data processing",
+          "deliverable": "Privacy policy, ToS, cookie consent",
+          "owner": "Idan",
+          "due": "2026-11-20",
+          "status": "Not started"
+        },
+        {
+          "team": "Executive sponsor",
+          "responsibility": "Direction, resources, decisions",
+          "deliverable": "Final go/no-go approval",
+          "owner": "Idan",
+          "due": "2026-11-27",
+          "status": "Not started"
+        }
+      ]
+    },
+    "roadmap": {
+      "rows": [
+        {
+          "timing": "T−8 weeks",
+          "workstream": "Discovery",
+          "deliverables": "Market research, customer insights, baseline",
+          "exit": "Opportunity validated",
+          "owner": "Idan",
+          "due": "2026-10-06",
+          "status": "Complete"
+        },
+        {
+          "timing": "T−7 weeks",
+          "workstream": "ICP & positioning",
+          "deliverables": "ICP, personas, value proposition",
+          "exit": "Stakeholder approval",
+          "owner": "Idan",
+          "due": "2026-10-13",
+          "status": "Complete"
+        },
+        {
+          "timing": "T−6 weeks",
+          "workstream": "Strategy",
+          "deliverables": "GTM motion, channels, funnel, budget",
+          "exit": "Plan approved",
+          "owner": "Idan",
+          "due": "2026-10-20",
+          "status": "In progress"
+        },
+        {
+          "timing": "T−5 weeks",
+          "workstream": "Creative & content",
+          "deliverables": "Messaging, creative briefs, content plan",
+          "exit": "Production underway",
+          "owner": "Noa (Content)",
+          "due": "2026-10-27",
+          "status": "In progress"
+        },
+        {
+          "timing": "T−4 weeks",
+          "workstream": "Infrastructure",
+          "deliverables": "Landing pages, CRM, tracking, automation",
+          "exit": "Initial QA passed",
+          "owner": "Yoav (Dev)",
+          "due": "2026-11-03",
+          "status": "Not started"
+        },
+        {
+          "timing": "T−3 weeks",
+          "workstream": "Production",
+          "deliverables": "Campaign assets, sales enablement",
+          "exit": "Core assets complete",
+          "owner": "Maya (Design)",
+          "due": "2026-11-10",
+          "status": "Not started"
+        },
+        {
+          "timing": "T−2 weeks",
+          "workstream": "Testing",
+          "deliverables": "QA, pilot campaigns, sales training",
+          "exit": "Critical issues resolved",
+          "owner": "Dan (Growth)",
+          "due": "2026-11-17",
+          "status": "Not started"
+        },
+        {
+          "timing": "T−1 week",
+          "workstream": "Launch readiness",
+          "deliverables": "Final checks, approvals, contingency plan",
+          "exit": "Go/no-go decision",
+          "owner": "Idan",
+          "due": "2026-11-24",
+          "status": "Not started"
+        },
+        {
+          "timing": "Launch week",
+          "workstream": "Activation",
+          "deliverables": "Campaigns live, launch communications",
+          "exit": "Tracking and routing verified",
+          "owner": "Idan",
+          "due": "2026-12-01",
+          "status": "Not started"
+        },
+        {
+          "timing": "T+1 week",
+          "workstream": "Early optimization",
+          "deliverables": "Initial performance review, fixes",
+          "exit": "Priority improvements assigned",
+          "owner": "Dan (Growth)",
+          "due": "2026-12-08",
+          "status": "Not started"
+        },
+        {
+          "timing": "T+2 weeks",
+          "workstream": "Optimization",
+          "deliverables": "Creative, channel, and funnel tests",
+          "exit": "Test decisions documented",
+          "owner": "Dan (Growth)",
+          "due": "2026-12-15",
+          "status": "Not started"
+        },
+        {
+          "timing": "T+3 weeks",
+          "workstream": "Commercial review",
+          "deliverables": "Pipeline, conversion, feedback",
+          "exit": "Bottlenecks addressed",
+          "owner": "Idan",
+          "due": "2026-12-22",
+          "status": "Not started"
+        },
+        {
+          "timing": "T+4 weeks",
+          "workstream": "Scale decision",
+          "deliverables": "Performance review and next-month plan",
+          "exit": "Scale, iterate, or stop",
+          "owner": "Idan",
+          "due": "2026-12-29",
+          "status": "Not started"
+        }
+      ]
+    },
+    "launch": {
+      "checks": {
+        "launch:product-offer-is-ready-and-accessible": false,
+        "launch:pricing-terms-and-availability-are-correct": true,
+        "launch:support-and-escalation-processes-are-staffed": false,
+        "launch:landing-pages-and-core-assets-are-live": false,
+        "launch:campaigns-budgets-targeting-and-links-are-verified": false,
+        "launch:email-social-pr-and-partner-schedules-are-confirmed": false,
+        "launch:conversion-tracking-and-dashboards-work": false,
+        "launch:lead-routing-and-sales-follow-up-are-tested": false,
+        "launch:owners-escalation-contacts-and-reporting-cadence-are-confirmed": false,
+        "launch:required-legal-and-compliance-approvals-are-complete": false,
+        "launch:known-risks-have-owners-and-mitigations": false,
+        "launch:decision-maker-has-approved-launch": false
+      },
+      "decision": "Pending",
+      "decisionOwner": "Idan Leibovitch",
+      "decisionDate": "2026-11-27",
+      "notes": "Conditions for Go: paywall + Stripe live and tested; activation event firing; privacy policy published; per-user API cost cap active. Product Hunt date can slip by up to 1 week without affecting paid campaigns."
+    },
+    "optimize": {
+      "rows": [
+        {
+          "review": "First 48–72 hours",
+          "questions": "Is tracking working? Are campaigns delivering?",
+          "actions": "Fix technical issues; correct spend or routing",
+          "owner": "Yoav (Dev)",
+          "date": "2026-12-03",
+          "result": ""
+        },
+        {
+          "review": "End of week 1",
+          "questions": "Are we reaching the right audience?",
+          "actions": "Refine targeting and messaging",
+          "owner": "Dan (Growth)",
+          "date": "2026-12-08",
+          "result": ""
+        },
+        {
+          "review": "End of week 2",
+          "questions": "Where is funnel conversion breaking?",
+          "actions": "Test landing page, offer, nurture, or follow-up",
+          "owner": "Dan (Growth)",
+          "date": "2026-12-15",
+          "result": ""
+        },
+        {
+          "review": "End of week 3",
+          "questions": "Are sign-ups activating (2nd prompt in 7 days)?",
+          "actions": "Improve onboarding and day-2 email",
+          "owner": "Noa (Content)",
+          "date": "2026-12-22",
+          "result": ""
+        },
+        {
+          "review": "Day 30",
+          "questions": "Are economics and outcomes on target?",
+          "actions": "Scale winners, revise assumptions, or stop weak channels",
+          "owner": "Idan",
+          "date": "2026-12-31",
+          "result": ""
+        },
+        {
+          "review": "Day 60–90",
+          "questions": "Are customers retained and generating value?",
+          "actions": "Optimize onboarding, retention, expansion, and LTV",
+          "owner": "Idan",
+          "date": "2027-01-30",
+          "result": ""
+        }
+      ],
+      "notes": "EXP-01 (planned): Observation — beta users who saw a peer percentile scored more prompts. Hypothesis — showing percentile on first score lifts activation. Change — add percentile to result screen. Metric — activation rate. Decision date — Dec 15. Outcome — TBD."
+    },
+    "risks": {
+      "rows": [
+        {
+          "risk": "Launch delay",
+          "probability": "Medium",
+          "impact": "High",
+          "mitigation": "Must-have scope: scorer, paywall, share card. Defer Team plan to January.",
+          "owner": "Idan",
+          "status": "Mitigating"
+        },
+        {
+          "risk": "Poor campaign conversion",
+          "probability": "Medium",
+          "impact": "High",
+          "mitigation": "Pilot $500 on LinkedIn Nov 17–24; 2 LP variants ready.",
+          "owner": "Dan (Growth)",
+          "status": "Open"
+        },
+        {
+          "risk": "Acquisition costs too high",
+          "probability": "Medium",
+          "impact": "High",
+          "mitigation": "Stop-loss: pause any ad set above $7 cost per sign-up after $300 spend.",
+          "owner": "Dan (Growth)",
+          "status": "Open"
+        },
+        {
+          "risk": "Low sales follow-up",
+          "probability": "Low",
+          "impact": "Medium",
+          "mitigation": "Team inquiries routed to Slack alert; 24h SLA.",
+          "owner": "Idan",
+          "status": "Open"
+        },
+        {
+          "risk": "Tracking failure",
+          "probability": "Low",
+          "impact": "High",
+          "mitigation": "QA all events on staging; daily Supabase count check in launch week.",
+          "owner": "Yoav (Dev)",
+          "status": "Open"
+        },
+        {
+          "risk": "Product or compliance issue",
+          "probability": "Low",
+          "impact": "High",
+          "mitigation": "Privacy policy + ToS reviewed before Nov 20; prompts excluded from training.",
+          "owner": "Idan",
+          "status": "Open"
+        },
+        {
+          "risk": "AI API cost spike from free-tier abuse",
+          "probability": "Medium",
+          "impact": "Medium",
+          "mitigation": "10 free scores/month cap, rate limit per IP, spend alert at daily threshold.",
+          "owner": "Yoav (Dev)",
+          "status": "Mitigating"
+        }
+      ]
+    },
+    "meetings": {
+      "cadence": "Twice weekly",
+      "attendees": "Idan (GTM lead), Dan (Growth), Noa (Content), Maya (Design), Yoav (Dev)",
+      "agenda": "Scorecard; channel performance; execution blockers; experiments; decisions",
+      "notes": "Oct 13: Positioning approved; price set at $19/mo Pro, free tier 10 scores/month. Owner: Idan.\nOct 16: Share card moved into launch scope (Yoav, due Nov 10). LP variant B brief to Maya by Oct 21."
+    },
+    "handover": {
+      "checks": {
+        "handover:approved-gtm-brief-and-business-objectives": true,
+        "handover:market-research-icp-personas-and-positioning": true,
+        "handover:channel-strategy-and-campaign-hypotheses": false,
+        "handover:funnel-model-kpi-definitions-and-forecasts": false,
+        "handover:campaign-and-content-calendar": false,
+        "handover:asset-production-tracker": false,
+        "handover:budget-and-resource-allocation": false,
+        "handover:analytics-tracking-and-dashboard-specification": false,
+        "handover:sales-customer-success-enablement-and-handoff-process": false,
+        "handover:master-roadmap-with-milestones-dependencies-and-owners": false,
+        "handover:launch-day-go-no-go-checklist": false,
+        "handover:post-launch-optimization-and-experiment-plan": false,
+        "handover:risk-register-and-contingency-plan": false,
+        "handover:weekly-reporting-and-decision-making-cadence": false
+      },
+      "notes": "Working docs: Messaging doc (Drive/PMP/Launch), beta interview notes (Drive/PMP/Research), creative briefs (Figma: PMP Launch). Key decisions: PLG-first, Team plan deferred to January, Product Hunt on launch day."
+    },
+    "kpiRows": [
+      {
+        "stage": "Awareness",
+        "kpi": "Reach / share of voice",
+        "target": "250K LinkedIn impressions in launch month",
+        "baseline": "40K/month (current)",
+        "source": "LinkedIn analytics",
+        "owner": "Idan"
+      },
+      {
+        "stage": "Acquisition",
+        "kpi": "Sign-ups / cost per sign-up",
+        "target": "2,300 sign-ups; ≤ $4.50 blended paid",
+        "baseline": "640 waitlist",
+        "source": "Supabase + ad platforms",
+        "owner": "Dan (Growth)"
+      },
+      {
+        "stage": "Conversion",
+        "kpi": "Free → Pro conversion",
+        "target": "≥ 5% of sign-ups in 60 days",
+        "baseline": "n/a (no paywall in beta)",
+        "source": "Stripe + Supabase",
+        "owner": "Idan"
+      },
+      {
+        "stage": "Revenue",
+        "kpi": "MRR / ARR run-rate",
+        "target": "$2,280 MRR by Jan 30",
+        "baseline": "$0",
+        "source": "Stripe",
+        "owner": "Idan"
+      },
+      {
+        "stage": "Activation",
+        "kpi": "2nd prompt scored within 7 days",
+        "target": "≥ 35%",
+        "baseline": "38% (beta)",
+        "source": "PostHog",
+        "owner": "Noa (Content)"
+      },
+      {
+        "stage": "Retention",
+        "kpi": "Pro month-2 retention",
+        "target": "≥ 80%",
+        "baseline": "n/a",
+        "source": "Stripe",
+        "owner": "Idan"
+      },
+      {
+        "stage": "Efficiency",
+        "kpi": "Paid CAC / LTV:CAC",
+        "target": "CAC ≤ $80; LTV:CAC ≥ 3",
+        "baseline": "n/a",
+        "source": "Dashboard",
+        "owner": "Dan (Growth)"
+      }
+    ]
+  }
+}
