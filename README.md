@@ -2,9 +2,9 @@
 
 A step-by-step planner that guides marketers through building and running a go-to-market plan: strategy, plan, readiness, and post-launch learning.
 
-Stack: Vite + React + TypeScript, Tailwind, Vitest, Supabase (Postgres + auth, RLS). Vercel hosting comes in Step 12.
+Stack: Vite + React + TypeScript, Tailwind, Vitest, Supabase (Postgres + auth, RLS). Hosted on Vercel.
 
-First-time Supabase setup: see [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md).
+First-time Supabase setup: [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md). Deploying: [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 ## Run it
 
@@ -13,6 +13,7 @@ npm install
 cp .env.example .env.local   # add Supabase URL + anon key
 npm run dev        # app at http://localhost:5173
 npm test           # unit tests + database access-rule tests
+npm run e2e        # browser tests against a demo build (no Supabase needed)
 npm run build      # typecheck + production build
 ```
 
@@ -63,4 +64,4 @@ Key rules:
 - [x] Step 9 — Tasks view (`#/p/<id>/tasks`): every channel, asset, calendar item, team deliverable, milestone and risk in one list; filter by open / overdue / due in 7 days / no owner / done, owner, step and search; edit owner, due date and status inline; CSV export. Readiness review on the Go / no-go step: verdict, steps before launch that aren't ready, open high-impact risks, overdue work
 - [x] Step 10 — exports: JSON (plans list, rail), task CSV (Tasks view), Word summary (summary page, rail, plans list)
 - [ ] Step 11 — AI assist
-- [ ] Step 12 — end-to-end tests + Vercel deploy
+- [x] Step 12 — browser tests (Playwright, `npm run e2e`), GitHub Actions CI, Vercel config with security headers. Deploy steps: [`docs/DEPLOY.md`](docs/DEPLOY.md)
