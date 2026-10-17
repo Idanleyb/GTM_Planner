@@ -8,6 +8,9 @@ import {
 import { downloadProject } from '../lib/importExport'
 import type { StoredProject } from '../lib/projectsRepo'
 import { navigate } from '../router'
+import type { PlanView } from '../router'
+import { downloadSummaryDoc } from '../lib/downloadSummary'
+import { SummaryView } from '../components/SummaryView'
 import type { Services, User, Workspace, WorkspaceRole } from '../services/types'
 import { friendlyError } from '../services/types'
 import { projectReducer } from '../state/projectReducer'
@@ -21,7 +24,7 @@ import { SectionView } from '../components/SectionView'
 interface LoaderProps {
   services: Services
   projectId: string
-  section: SectionId
+  section: PlanView
   user: User
   /** The user's workspaces; the editor uses the role in the project's own workspace. */
   workspaces: Workspace[]
@@ -79,7 +82,7 @@ export function EditorPage({ services, initial, section: current, role, user, on
   })
   const progress = projectProgress(project.data)
 
-  const go = (id: SectionId) => {
+  const go = (id: PlanView) => {
     navigate({ name: 'project', id: project.id, section: id })
     window.scrollTo({ top: 0 })
     document.getElementById('main')?.focus({ preventScroll: true })
@@ -120,15 +123,16 @@ export function EditorPage({ services, initial, section: current, role, user, on
     if (archived) setNotice(`${channel} archived with its details. Tick it again to restore.`)
   }
 
-  const section = SECTION_BY_ID[current]
-  const status = progress.sections.find(s => s.sectionId === current)!
+  const section = current === 'summary' ? null : SECTION_BY_ID[current]
+  const status = section ? progress.sections.find(s => s.sectionId === section.id)! : null
   const saveStatus = <SaveStatus autosave={autosave} mode={services.mode} />
 
   const footer = (
     <div className="space-y-3">
       <a href="#/" className="block font-semibold text-white underline decoration-signal decoration-2 underline-offset-4">All plans</a>
       <div>{saveStatus}</div>
-      <button type="button" onClick={() => downloadProject(project)} className="block text-white/70 underline underline-offset-2 hover:text-white">Download as JSON</button>
+      <button type="button" onClick={() => void downloadSummaryDoc(project).catch(e => setNotice(`The Word file couldn’t be created: ${e instanceof Error ? e.message : e}`))} className="block text-white/70 underline underline-offset-2 hover:text-white">Download plan as Word doc</button>
+      <button type="button" onClick={() => downloadProject(project)} className="block text-white/70 underline underline-offset-2 hover:text-white">Download data as JSON</button>
       <p className="m-0 truncate text-white/55" title={user.email}>{user.email} · <button type="button" onClick={onSignOut} className="underline underline-offset-2 hover:text-white">Sign out</button></p>
     </div>
   )
@@ -146,12 +150,14 @@ export function EditorPage({ services, initial, section: current, role, user, on
             {initial.archivedAt && (
               <p className="mx-auto mb-6 max-w-5xl rounded-md bg-paper px-3 py-2 text-sm text-ink-soft ring-1 ring-line">This plan is archived. Restore it from the plans list to show it there again.</p>
             )}
-            <SectionView key={current} section={section} status={status} project={project} dispatch={dispatch} onNavigate={go}
-              onField={onField} onChannel={onChannel}
-              onRecalculateRoadmap={() => { dispatch({ type: 'recalculateRoadmap' }); setNotice('All roadmap dates reset from the launch date.') }} today={today} />
+            {section && status ? (
+              <SectionView key={current} section={section} status={status} project={project} dispatch={dispatch} onNavigate={go}
+                onField={onField} onChannel={onChannel}
+                onRecalculateRoadmap={() => { dispatch({ type: 'recalculateRoadmap' }); setNotice('All roadmap dates reset from the launch date.') }} today={today} />
+            ) : <SummaryView project={project} today={today} onNavigate={go} />}
           </main>
         </div>
-        <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-4">
+        <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-4 print:hidden">
           {notice && <p className="pointer-events-auto m-0 max-w-xl rounded-lg bg-ink px-4 py-3 text-sm text-white shadow-lg">{notice}</p>}
         </div>
       </div>

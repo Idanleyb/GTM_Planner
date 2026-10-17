@@ -5,6 +5,7 @@ import { MOTIONS } from '../config/types'
 import type { Motion } from '../config/types'
 import { createProjectData, migratePrototype, motionOf, projectProgress } from '../engine'
 import { downloadProject, parseImport } from '../lib/importExport'
+import { downloadSummaryDoc } from '../lib/downloadSummary'
 import type { StoredProject } from '../lib/projectsRepo'
 import { navigate } from '../router'
 import type { Services, Workspace } from '../services/types'
@@ -155,7 +156,9 @@ function PlanRow({ p, today, services, workspace, onChanged, onError }: {
       </div>
       <div className="col-start-2 flex flex-wrap gap-x-4 gap-y-1 text-sm sm:col-start-auto sm:justify-end">
         <a href={href} className="font-semibold text-ink underline decoration-signal decoration-2 underline-offset-2">Open</a>
-        <button type="button" onClick={() => downloadProject(p)} className="text-ink-soft underline underline-offset-2 hover:text-ink">Download</button>
+        <a href={`#/p/${encodeURIComponent(p.id)}/summary`} className="text-ink-soft underline underline-offset-2 hover:text-ink">Summary</a>
+        <button type="button" onClick={() => void downloadSummaryDoc(p, today).catch(e => onError(friendlyError(e)))} className="text-ink-soft underline underline-offset-2 hover:text-ink">Word doc</button>
+        <button type="button" onClick={() => downloadProject(p)} className="text-ink-soft underline underline-offset-2 hover:text-ink">JSON</button>
         {canEdit && (
           <button type="button" className="text-ink-soft underline underline-offset-2 hover:text-ink" onClick={() => {
             const n = prompt('Rename plan', p.name)?.trim()

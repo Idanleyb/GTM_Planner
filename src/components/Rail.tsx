@@ -2,15 +2,16 @@ import { SECTIONS } from '../config/sections'
 import { PHASES } from '../config/types'
 import type { Project, SectionId } from '../config/types'
 import type { ProjectProgress } from '../engine/progress'
+import type { PlanView } from '../router'
 import { StatusMark } from './StatusMark'
 import { launchCountdown } from './labels'
 
 interface Props {
   project: Project
   progress: ProjectProgress
-  current: SectionId
+  current: PlanView
   today: Date
-  onNavigate: (id: SectionId) => void
+  onNavigate: (id: PlanView) => void
   footer: React.ReactNode
 }
 
@@ -19,7 +20,7 @@ export function Rail({ project, progress, current, today, onNavigate, footer }: 
   const countdown = launchCountdown(String(project.data.sections.brief.fields.launchDate ?? ''), today)
   const statusOf = (id: SectionId) => progress.sections.find(s => s.sectionId === id)!.state
   return (
-    <aside className="sticky top-0 hidden h-screen w-80 shrink-0 flex-col overflow-y-auto bg-ink text-white/85 lg:flex">
+    <aside className="sticky top-0 hidden h-screen w-80 shrink-0 flex-col overflow-y-auto bg-ink text-white/85 lg:flex print:hidden">
       <div className="border-b border-white/10 px-6 pb-5 pt-6">
         <p className="m-0 truncate text-sm text-white/70" title={project.name}>{project.name}</p>
         {countdown ? (
@@ -38,6 +39,10 @@ export function Rail({ project, progress, current, today, onNavigate, footer }: 
             <div className="h-full rounded-full bg-signal" style={{ width: `${progress.overall.pct}%` }} />
           </div>
         </div>
+        <button type="button" onClick={() => onNavigate('summary')} aria-current={current === 'summary' ? 'page' : undefined}
+          className={`mt-4 flex w-full items-center justify-between rounded-md border px-3 py-2 text-left text-sm ${current === 'summary' ? 'border-signal bg-white/10 font-semibold text-white' : 'border-white/20 text-white hover:border-white/40'}`}>
+          <span>Plan summary</span><span className="text-white/60">Word download</span>
+        </button>
       </div>
 
       <nav aria-label="Plan steps" className="flex-1 px-3 py-4">
@@ -75,14 +80,15 @@ export function Rail({ project, progress, current, today, onNavigate, footer }: 
 export function MobileBar({ project, progress, current, today, onNavigate, status }: Omit<Props, 'footer'> & { status?: React.ReactNode }) {
   const countdown = launchCountdown(String(project.data.sections.brief.fields.launchDate ?? ''), today)
   return (
-    <header className="sticky top-0 z-10 bg-ink px-4 py-3 text-white lg:hidden">
+    <header className="sticky top-0 z-10 bg-ink px-4 py-3 text-white lg:hidden print:hidden">
       <div className="flex items-baseline justify-between gap-3">
         <p className="m-0 truncate text-sm text-white/75">{project.name}</p>
         {countdown && <p className="m-0 shrink-0"><span className="condensed text-2xl font-extrabold">{countdown.value}</span> <span className="text-xs text-white/70">{countdown.caption}</span></p>}
       </div>
       <label htmlFor="mobile-step" className="sr-only">Go to step</label>
-      <select id="mobile-step" value={current} onChange={e => onNavigate(e.target.value as SectionId)}
+      <select id="mobile-step" value={current} onChange={e => onNavigate(e.target.value as PlanView)}
         className="mt-2 w-full rounded-md border border-white/20 bg-white/10 px-3 py-2 text-white">
+        <option value="summary" className="text-ink">Plan summary</option>
         {PHASES.map(ph => (
           <optgroup key={ph.id} label={ph.title} className="text-ink">
             {SECTIONS.filter(s => s.phase === ph.id).map(s => {

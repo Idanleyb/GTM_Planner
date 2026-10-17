@@ -22,6 +22,7 @@
   body { margin: 0; }
   :focus-visible { outline: 2px solid var(--color-signal); outline-offset: 2px; }
   input, select, textarea { font: inherit; color: var(--color-ink); }
+  @media print { html, body { background: #fff; } @page { margin: 16mm; } }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 }
 

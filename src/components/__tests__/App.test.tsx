@@ -199,3 +199,28 @@ describe('sign-in, plans and team', () => {
     expect(await screen.findByText(/must keep at least one owner/)).toBeTruthy()
   })
 })
+
+describe('plan summary and Word download', () => {
+  it('shows the plan on one page and links gaps to their step', async () => {
+    await openSample('summary')
+    expect(screen.getByRole('heading', { level: 1, name: /Pimp My Prompt/ })).toBeTruthy()
+    expect(screen.getByText('New product, PLG motion, launching 1 Dec 2026')).toBeTruthy()
+    expect(screen.getByRole('heading', { level: 2, name: /Open risks/ })).toBeTruthy()
+    await userEvent.setup().click(screen.getByRole('button', { name: '04 Pricing & packaging' }))
+    expect(await screen.findByRole('heading', { level: 1, name: 'Pricing & packaging' })).toBeTruthy()
+  })
+
+  it('downloads a Word file named after the plan', async () => {
+    const created: Blob[] = []
+    URL.createObjectURL = vi.fn((b: Blob) => { created.push(b); return 'blob:x' }) as unknown as typeof URL.createObjectURL
+    URL.revokeObjectURL = vi.fn()
+    const clicks: string[] = []
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) { clicks.push(this.download) })
+    await openSample('summary')
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Download Word doc' }))
+    await waitFor(() => expect(clicks).toHaveLength(1), { timeout: 5000 })
+    expect(clicks[0]).toBe('GTM plan - pimp-my-prompt-public-launch-test-data.docx')
+    expect(created[0].size).toBeGreaterThan(5000)
+  })
+})
+
